@@ -1,0 +1,35 @@
+name: Daily outcome or feature
+description: Define a reviewable product outcome with acceptance evidence.
+title: "[Wxx] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or user story
+      description: Explain the concrete behavior this issue should deliver.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and dependencies
+      description: List work included and any prerequisite issues or decisions.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance evidence
+      description: State what a reviewer can observe or reproduce when this is complete.
+    validations:
+      required: true
+  - type: textarea
+    id: commits
+    attributes:
+      label: Candidate work packages
+      description: List coherent implementation, verification, and documentation changes.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Relevant validation
+      description: Describe meaningful checks and attach actual results when complete.

@@ -1,0 +1,35 @@
+# Python environments and generated artifacts
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Browser dependencies and builds
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# Local configuration and private data
+.env
+.env.*
+!.env.example
+data/
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
