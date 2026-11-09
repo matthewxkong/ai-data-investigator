@@ -1,0 +1,32 @@
+[project]
+name = "ai-data-investigator-api"
+version = "0.0.1"
+description = "Evidence-backed CSV investigation assistant API"
+requires-python = ">=3.12,<3.14"
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.16.0",
+    "mypy>=1.13,<2",
+    "pytest>=8,<10",
+    "ruff>=0.9,<1",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
