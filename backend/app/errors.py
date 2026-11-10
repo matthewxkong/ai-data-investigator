@@ -138,7 +138,12 @@ def install_error_handlers(application: FastAPI) -> None:
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         request.state.request_id = uuid4().hex
-        response = await call_next(request)
+        try:
+            response = await call_next(request)
+        except Exception as exception:
+            # Contain failures before ServerErrorMiddleware can re-raise their raw details
+            # to the ASGI server's traceback logger.
+            response = await unexpected_error_handler(request, exception)
         response.headers["X-Request-ID"] = request.state.request_id
         return response
 

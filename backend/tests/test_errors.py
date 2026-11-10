@@ -90,3 +90,21 @@ def test_openapi_documents_the_error_envelope(settings: Settings) -> None:
         assert response["content"]["application/json"]["schema"] == {
             "$ref": "#/components/schemas/ErrorResponse"
         }
+
+
+def test_unexpected_error_does_not_escape_to_the_asgi_server(
+    settings: Settings, caplog: pytest.LogCaptureFixture
+) -> None:
+    application = create_app(settings)
+
+    @application.get("/test-contained-failure")
+    def fail() -> None:
+        raise RuntimeError("private-example-secret")
+
+    # The default transport re-raises server exceptions; a contained failure must not escape.
+    with caplog.at_level(logging.ERROR), TestClient(application) as client:
+        response = client.get("/test-contained-failure")
+        assert response.status_code == 500
+        assert response.json()["error"]["code"] == "internal_error"
+        assert "RuntimeError" in caplog.text
+        assert "private-example-secret" not in caplog.text
