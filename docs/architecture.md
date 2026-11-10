@@ -41,7 +41,11 @@ The activity view shows tools, arguments, validated outputs, and timings. It doe
 
 ## Present implementation
 
-Day one provides a health-only API and a frontend that checks its connection. Ingestion, persistence, the model adapter, worker isolation, and analytical tooling are future milestones. There is no execution endpoint or model integration in this skeleton.
+Day two provides validated backend settings, a lifespan-managed SQLite metadata store, ordered/checksummed migrations, and internal dataset/investigation repositories. Database relationships enforce session-scoped dataset links, and repository reads and updates require the owning session. Each operation owns and closes its connection; writes and migrations use explicit transactions.
+
+The API exposes `/api/health` for liveness and `/api/ready` for initialized, reachable metadata with a compatible schema. Readiness probes never recreate missing files or repair damaged state. Errors use a consistent envelope with a server-generated request ID and omit request values and raw exception details. Unexpected pre-response request failures are contained before the ASGI server's traceback logger receives them.
+
+The frontend still checks the health endpoint; its connected indicator is not a claim that the metadata database, model provider, or analytical worker is ready. No public dataset/investigation HTTP routes, session authentication, ingestion, model adapter, or generated-SQL execution are enabled yet. Metadata status storage does not implement agent state-transition policy.
 
 ## Consequences
 

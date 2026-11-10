@@ -1,4 +1,4 @@
-"""Backend-only, validated configuration; constructing settings performs no I/O."""
+"""Backend-only configuration; loading settings creates no application data or connections."""
 
 from pathlib import Path
 from typing import Literal

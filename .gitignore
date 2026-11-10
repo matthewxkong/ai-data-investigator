@@ -25,7 +25,9 @@ data/
 *.duckdb.wal
 *.sqlite
 *.sqlite3
+*.sqlite3-*
 *.db
+*.db-*
 *.log
 
 # Editor and operating-system files

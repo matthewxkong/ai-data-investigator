@@ -2,7 +2,7 @@
 
 ## W01 / November 9, 2026
 
-Status: day-one foundation complete locally. The P01 branch remains a draft until W02's API and persistence work is complete.
+Status: day-one foundation completed and merged through PR #3. Day two continues in a separate branch and PR because the original foundation PR has already been merged.
 
 Completed work packages:
 
@@ -26,22 +26,40 @@ Verified on Windows with Python 3.13.3 and Node 22.18.0:
 - HTTP failure and an unexpected health payload display the unavailable state; retry restores the connected state.
 - No uncaught browser errors or external runtime requests occurred during these checks.
 
-These are foundation checks. They do not demonstrate ingestion, database persistence, model integration, SQL execution, or analytical correctness; those implementations begin in the following milestones. GitHub-hosted checks must be inspected separately after publication.
+These day-one checks cover the original foundation, before metadata persistence was implemented. Windows/Linux GitHub-hosted checks also passed for that foundation. Ingestion, model integration, SQL execution, and analytical correctness remain later milestones.
 
 ![Desktop foundation with a connected API](images/foundation-desktop.png)
 
 [Mobile foundation screenshot](images/foundation-mobile.png)
 
-## Next: W02 / November 10, 2026
+## W02 / November 10, 2026
 
-Deliver the API and persistence foundation:
+Status: implemented on `work/w02-api-persistence`, awaiting owner review and merge. Issue #2 tracks acceptance; it remains open until the Day 2 PR is merged. The earlier foundation merge auto-closed that issue before implementation, so it was reopened.
 
-- Add typed application settings and backend-only secret loading.
-- Extend health with a distinct readiness contract.
-- Create the SQLite metadata schema and migrations.
-- Add dataset and investigation metadata repositories.
-- Define consistent API error envelopes.
-- Verify persistence across application instances and startup failures.
-- Update setup documentation and complete P01 when the combined scope passes checks.
+Completed work packages:
 
-The health-only application factory is already available from W01. Build on it rather than recreating it. November 11 is Veterans Day and remains a rest day.
+- [x] Typed settings, dotenv/environment precedence, data-path normalization, and redacted backend secret loading.
+- [x] Checksummed SQLite migration history, transactional DDL, and schema compatibility validation.
+- [x] Validated, immutable dataset metadata with session-scoped lookup and listing.
+- [x] Investigation metadata, persisted statuses, and same-session database foreign keys.
+- [x] Lifespan-managed initialization and distinct process liveness / metadata readiness contracts.
+- [x] Consistent errors, generated request IDs, sanitized validation messages, and preserved HTTP headers.
+- [x] Lifecycle checks for application recreation, migration rollback, concurrency, storage loss/locks, and startup failures.
+- [x] Contained unexpected request exceptions so their raw details do not escape to the ASGI traceback logger.
+- [x] Updated setup, configuration example, API documentation, and source-data ignore rules.
+
+Verification on Windows, Python 3.13.3, and Node 22.18.0:
+
+- **46 backend tests pass**, including persistence across complete application instances, session ownership, invalid inputs, migration failures, and unavailable storage.
+- Ruff lint/format and strict application mypy pass.
+- Frontend Biome, TypeScript, and production build pass; the existing frontend is unchanged.
+- Live HTTP probes verify `/api/health` (200), `/api/ready` (200), and an absent route (404), both directly and through the Vite proxy. Error and header request IDs match.
+- The default runtime database is ignored by Git. Tests use isolated temporary directories and no real model credentials or model calls.
+
+GitHub-hosted check results are attached to the Day 2 PR after publication. Approval and merge remain with the repository owner.
+
+This milestone implements internal metadata services, not public dataset/investigation HTTP routes, authentication, CSV ingestion, an analytical worker, or a model provider. The frontend's connected indicator continues to describe process liveness only.
+
+## Next working day: W03 / November 12, 2026
+
+November 11 is Veterans Day and remains a rest day. On Thursday, November 12, create reproducible synthetic sales, support-ticket, and inventory datasets, messy variants, metric definitions, and development/reference questions. Keep held-out evaluation cases separate from development cases as specified in the delivery plan.
