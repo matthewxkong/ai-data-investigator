@@ -12,6 +12,19 @@ class MetadataStartupError(RuntimeError):
     """Actionable startup failure without exposing configuration values."""
 
 
+def validate_schema(connection: sqlite3.Connection) -> None:
+    if migrations.schema_version(connection) != len(migrations.MIGRATIONS):
+        raise migrations.MigrationError("The metadata schema is not fully migrated.")
+    connection.execute(
+        "SELECT id, version, session_id, name, byte_count, row_count, created_at "
+        "FROM datasets LIMIT 0"
+    )
+    connection.execute(
+        "SELECT id, dataset_id, session_id, question, status, created_at, updated_at "
+        "FROM investigations LIMIT 0"
+    )
+
+
 class Database:
     def __init__(self, path: Path, *, timeout_seconds: float = 5.0) -> None:
         self.path = path.resolve()
@@ -48,6 +61,7 @@ class Database:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             with self.connection(write=True, create=True) as connection:
                 migrations.apply_migrations(connection)
+                validate_schema(connection)
         except (OSError, sqlite3.Error, migrations.MigrationError) as error:
             raise MetadataStartupError(
                 "Metadata initialization failed. Check ADI_DATA_DIR permissions and schema "
@@ -57,12 +71,7 @@ class Database:
     def is_ready(self) -> bool:
         try:
             with self.connection() as connection:
-                if migrations.schema_version(connection) != len(migrations.MIGRATIONS):
-                    return False
-                connection.execute("SELECT id, version, session_id, name FROM datasets LIMIT 0")
-                connection.execute(
-                    "SELECT id, dataset_id, session_id, status FROM investigations LIMIT 0"
-                )
+                validate_schema(connection)
             return True
         except (OSError, sqlite3.Error, migrations.MigrationError):
             return False
