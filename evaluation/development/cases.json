@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "generator_version": 1,
+  "fixture_seed": 20261112,
+  "split": "development",
+  "cases": [
+    {
+      "id": "dev_sales_count",
+      "dataset": "sales",
+      "question": "How many sales orders are in this dataset?",
+      "sql_file": "sql/dev_sales_count.sql",
+      "columns": [
+        "order_count"
+      ],
+      "expected_rows": [
+        [
+          120
+        ]
+      ]
+    },
+    {
+      "id": "dev_sales_revenue",
+      "dataset": "sales",
+      "question": "What is total revenue in USD, defined as quantity times unit_price?",
+      "sql_file": "sql/dev_sales_revenue.sql",
+      "columns": [
+        "revenue_usd"
+      ],
+      "expected_rows": [
+        [
+          "44277.24"
+        ]
+      ]
+    },
+    {
+      "id": "dev_sales_regions",
+      "dataset": "sales",
+      "question": "What is revenue in USD for each region, ordered by region?",
+      "sql_file": "sql/dev_sales_regions.sql",
+      "columns": [
+        "region",
+        "revenue_usd"
+      ],
+      "expected_rows": [
+        [
+          "East",
+          "10319.02"
+        ],
+        [
+          "North",
+          "15654.20"
+        ],
+        [
+          "South",
+          "8417.04"
+        ],
+        [
+          "West",
+          "9886.98"
+        ]
+      ]
+    },
+    {
+      "id": "dev_sales_months",
+      "dataset": "sales",
+      "question": "How much revenue in USD was earned in each calendar month, ordered chronologically?",
+      "sql_file": "sql/dev_sales_months.sql",
+      "columns": [
+        "month",
+        "revenue_usd"
+      ],
+      "expected_rows": [
+        [
+          "2026-01",
+          "8022.94"
+        ],
+        [
+          "2026-02",
+          "6757.97"
+        ],
+        [
+          "2026-03",
+          "5750.61"
+        ],
+        [
+          "2026-04",
+          "10051.95"
+        ],
+        [
+          "2026-05",
+          "7386.87"
+        ],
+        [
+          "2026-06",
+          "6306.90"
+        ]
+      ]
+    },
+    {
+      "id": "dev_sales_products",
+      "dataset": "sales",
+      "question": "Which three products sold the most units? Break ties by product name ascending.",
+      "sql_file": "sql/dev_sales_products.sql",
+      "columns": [
+        "product",
+        "units_sold"
+      ],
+      "expected_rows": [
+        [
+          "Monitor",
+          141
+        ],
+        [
+          "Notebook, A5",
+          126
+        ],
+        [
+          "Mouse",
+          96
+        ]
+      ]
+    },
+    {
+      "id": "dev_ticket_priorities",
+      "dataset": "tickets",
+      "question": "How many tickets are in each priority, ordered by priority label?",
+      "sql_file": "sql/dev_ticket_priorities.sql",
+      "columns": [
+        "priority",
+        "ticket_count"
+      ],
+      "expected_rows": [
+        [
+          "high",
+          28
+        ],
+        [
+          "low",
+          28
+        ],
+        [
+          "normal",
+          24
+        ],
+        [
+          "urgent",
+          16
+        ]
+      ]
+    },
+    {
+      "id": "dev_ticket_unresolved",
+      "dataset": "tickets",
+      "question": "How many tickets are unresolved, meaning their status is not resolved?",
+      "sql_file": "sql/dev_ticket_unresolved.sql",
+      "columns": [
+        "unresolved_count"
+      ],
+      "expected_rows": [
+        [
+          48
+        ]
+      ]
+    },
+    {
+      "id": "dev_ticket_resolution_hours",
+      "dataset": "tickets",
+      "question": "For resolved tickets only, what is the total resolution time in hours by category, ordered by category?",
+      "sql_file": "sql/dev_ticket_resolution_hours.sql",
+      "columns": [
+        "category",
+        "total_resolution_hours"
+      ],
+      "expected_rows": [
+        [
+          "account",
+          584
+        ],
+        [
+          "billing",
+          669
+        ],
+        [
+          "technical",
+          878
+        ]
+      ]
+    },
+    {
+      "id": "dev_inventory_reorder",
+      "dataset": "inventory",
+      "question": "How many SKU locations need reorder in each warehouse? Available stock is on_hand minus reserved; reorder when it is strictly below reorder_point. Order by warehouse.",
+      "sql_file": "sql/dev_inventory_reorder.sql",
+      "columns": [
+        "warehouse",
+        "reorder_count"
+      ],
+      "expected_rows": [
+        [
+          "Central Hub",
+          1
+        ],
+        [
+          "North Hub",
+          5
+        ],
+        [
+          "West Hub",
+          6
+        ]
+      ]
+    },
+    {
+      "id": "dev_inventory_value",
+      "dataset": "inventory",
+      "question": "What is on-hand inventory value in USD by warehouse? Use on_hand times unit_cost, ordered by warehouse.",
+      "sql_file": "sql/dev_inventory_value.sql",
+      "columns": [
+        "warehouse",
+        "stock_value_usd"
+      ],
+      "expected_rows": [
+        [
+          "Central Hub",
+          "218848.72"
+        ],
+        [
+          "North Hub",
+          "200047.37"
+        ],
+        [
+          "West Hub",
+          "177219.37"
+        ]
+      ]
+    }
+  ]
+}
