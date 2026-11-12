@@ -1,0 +1,359 @@
+{
+  "encoding": "utf-8",
+  "files": [
+    {
+      "changes": [],
+      "columns": [
+        "snapshot_date",
+        "sku",
+        "warehouse",
+        "category",
+        "on_hand",
+        "reserved",
+        "reorder_point",
+        "unit_cost"
+      ],
+      "duplicate_source_rows": [],
+      "file": "inventory.csv",
+      "row_count": 72,
+      "sha256": "d46f237dc8ef1c0848a8a8481477b9a239dee683561ee23988342621f4042369",
+      "source_dataset": "inventory",
+      "variant": "clean"
+    },
+    {
+      "changes": [],
+      "columns": [
+        "snapshot_date",
+        "sku",
+        "warehouse",
+        "category",
+        "on_hand",
+        "reserved",
+        "reorder_point",
+        "unit_cost"
+      ],
+      "duplicate_source_rows": [
+        1,
+        8
+      ],
+      "file": "inventory_duplicates.csv",
+      "row_count": 74,
+      "sha256": "5b33b218d21aec74f13f666b3aa7cc52d0cba4dde9ca51bc5bc68fe64fde2749",
+      "source_dataset": "inventory",
+      "variant": "duplicates"
+    },
+    {
+      "changes": [
+        {
+          "after": "many",
+          "before": "0",
+          "column": "on_hand",
+          "data_row": 3
+        },
+        {
+          "after": "$12.50",
+          "before": "151.62",
+          "column": "unit_cost",
+          "data_row": 11
+        },
+        {
+          "after": "06/07/2026",
+          "before": "2026-06-30",
+          "column": "snapshot_date",
+          "data_row": 17
+        }
+      ],
+      "columns": [
+        "snapshot_date",
+        "sku",
+        "warehouse",
+        "category",
+        "on_hand",
+        "reserved",
+        "reorder_point",
+        "unit_cost"
+      ],
+      "duplicate_source_rows": [],
+      "file": "inventory_mixed_types.csv",
+      "row_count": 72,
+      "sha256": "a04c441a3ef08e42399febc0822740b4beeddbbda1bb8266641e821dd36f08d0",
+      "source_dataset": "inventory",
+      "variant": "mixed_types"
+    },
+    {
+      "changes": [
+        {
+          "after": "",
+          "before": "10.54",
+          "column": "unit_cost",
+          "data_row": 4
+        },
+        {
+          "after": "",
+          "before": "West Hub",
+          "column": "warehouse",
+          "data_row": 12
+        },
+        {
+          "after": "",
+          "before": "19",
+          "column": "reorder_point",
+          "data_row": 18
+        }
+      ],
+      "columns": [
+        "snapshot_date",
+        "sku",
+        "warehouse",
+        "category",
+        "on_hand",
+        "reserved",
+        "reorder_point",
+        "unit_cost"
+      ],
+      "duplicate_source_rows": [],
+      "file": "inventory_nulls.csv",
+      "row_count": 72,
+      "sha256": "25586f25f20523a9f7e599979c57764e998a432dfbb9504fee0854a0e74738f8",
+      "source_dataset": "inventory",
+      "variant": "nulls"
+    },
+    {
+      "changes": [],
+      "columns": [
+        "order_id",
+        "order_date",
+        "region",
+        "product",
+        "quantity",
+        "unit_price"
+      ],
+      "duplicate_source_rows": [],
+      "file": "sales.csv",
+      "row_count": 120,
+      "sha256": "e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+      "source_dataset": "sales",
+      "variant": "clean"
+    },
+    {
+      "changes": [],
+      "columns": [
+        "order_id",
+        "order_date",
+        "region",
+        "product",
+        "quantity",
+        "unit_price"
+      ],
+      "duplicate_source_rows": [
+        1,
+        8
+      ],
+      "file": "sales_duplicates.csv",
+      "row_count": 122,
+      "sha256": "77f8683f6a02b4c27eb2007dc8b594063b8db19527fe166abc13197d187fbec6",
+      "source_dataset": "sales",
+      "variant": "duplicates"
+    },
+    {
+      "changes": [
+        {
+          "after": "many",
+          "before": "1",
+          "column": "quantity",
+          "data_row": 3
+        },
+        {
+          "after": "$19.95",
+          "before": "19.95",
+          "column": "unit_price",
+          "data_row": 11
+        },
+        {
+          "after": "03/04/2026",
+          "before": "2026-01-11",
+          "column": "order_date",
+          "data_row": 17
+        }
+      ],
+      "columns": [
+        "order_id",
+        "order_date",
+        "region",
+        "product",
+        "quantity",
+        "unit_price"
+      ],
+      "duplicate_source_rows": [],
+      "file": "sales_mixed_types.csv",
+      "row_count": 120,
+      "sha256": "9d79218b49a1ca734f5cf818449433a534be1fbc991de4005706d2ed07d5a97d",
+      "source_dataset": "sales",
+      "variant": "mixed_types"
+    },
+    {
+      "changes": [
+        {
+          "after": "",
+          "before": "3",
+          "column": "quantity",
+          "data_row": 4
+        },
+        {
+          "after": "",
+          "before": "79.50",
+          "column": "unit_price",
+          "data_row": 12
+        },
+        {
+          "after": "",
+          "before": "2026-01-09",
+          "column": "order_date",
+          "data_row": 18
+        }
+      ],
+      "columns": [
+        "order_id",
+        "order_date",
+        "region",
+        "product",
+        "quantity",
+        "unit_price"
+      ],
+      "duplicate_source_rows": [],
+      "file": "sales_nulls.csv",
+      "row_count": 120,
+      "sha256": "4721c08e7cb3538f5f6b048547b07b4a4f415cd67f40caf8b46953684cdcf33b",
+      "source_dataset": "sales",
+      "variant": "nulls"
+    },
+    {
+      "changes": [],
+      "columns": [
+        "ticket_id",
+        "created_at",
+        "resolved_at",
+        "status",
+        "priority",
+        "category",
+        "assigned_team",
+        "resolution_hours",
+        "customer_tier"
+      ],
+      "duplicate_source_rows": [],
+      "file": "tickets.csv",
+      "row_count": 96,
+      "sha256": "f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+      "source_dataset": "tickets",
+      "variant": "clean"
+    },
+    {
+      "changes": [],
+      "columns": [
+        "ticket_id",
+        "created_at",
+        "resolved_at",
+        "status",
+        "priority",
+        "category",
+        "assigned_team",
+        "resolution_hours",
+        "customer_tier"
+      ],
+      "duplicate_source_rows": [
+        1,
+        8
+      ],
+      "file": "tickets_duplicates.csv",
+      "row_count": 98,
+      "sha256": "5d29ce9acea8113510a9e031c5e6453c67390e2d502adfa74ccb9c5cd432f635",
+      "source_dataset": "tickets",
+      "variant": "duplicates"
+    },
+    {
+      "changes": [
+        {
+          "after": "unknown",
+          "before": "15",
+          "column": "resolution_hours",
+          "data_row": 3
+        },
+        {
+          "after": "48 hours",
+          "before": "1",
+          "column": "resolution_hours",
+          "data_row": 11
+        },
+        {
+          "after": "04/05/2026 10:00",
+          "before": "2026-01-23T16:00:00Z",
+          "column": "created_at",
+          "data_row": 17
+        }
+      ],
+      "columns": [
+        "ticket_id",
+        "created_at",
+        "resolved_at",
+        "status",
+        "priority",
+        "category",
+        "assigned_team",
+        "resolution_hours",
+        "customer_tier"
+      ],
+      "duplicate_source_rows": [],
+      "file": "tickets_mixed_types.csv",
+      "row_count": 96,
+      "sha256": "d0db026eaf4db11757edd153f1494119c9b097fea99a5048193adb6fff625a6f",
+      "source_dataset": "tickets",
+      "variant": "mixed_types"
+    },
+    {
+      "changes": [
+        {
+          "after": "",
+          "before": "billing",
+          "column": "category",
+          "data_row": 4
+        },
+        {
+          "after": "",
+          "before": "normal",
+          "column": "priority",
+          "data_row": 12
+        },
+        {
+          "after": "",
+          "before": "2026-01-20T23:00:00Z",
+          "column": "created_at",
+          "data_row": 18
+        }
+      ],
+      "columns": [
+        "ticket_id",
+        "created_at",
+        "resolved_at",
+        "status",
+        "priority",
+        "category",
+        "assigned_team",
+        "resolution_hours",
+        "customer_tier"
+      ],
+      "duplicate_source_rows": [],
+      "file": "tickets_nulls.csv",
+      "row_count": 96,
+      "sha256": "35b0728f8a4cab9fc9e4829cc1660542a751d861f3906ca2db1fe3aa37c8d7cf",
+      "source_dataset": "tickets",
+      "variant": "nulls"
+    }
+  ],
+  "generator_version": 1,
+  "newline": "LF",
+  "null_representation": "empty_field",
+  "origin": "synthetic_builtin_distributions",
+  "reference_python": "3.13",
+  "schema_version": 1,
+  "seed": 20261112
+}
