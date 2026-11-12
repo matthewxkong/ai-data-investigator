@@ -11,6 +11,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "duckdb>=1.4,<3",
     "httpx2>=2.16.0",
     "mypy>=1.13,<2",
     "pytest>=8,<10",

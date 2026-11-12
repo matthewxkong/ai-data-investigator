@@ -1,0 +1,121 @@
+order_id,order_date,region,product,quantity,unit_price
+S0001,2026-01-26,North,Monitor,5,229.00
+S0002,2026-01-13,North,Monitor,6,229.00
+S0003,2026-01-20,North,Monitor,1,229.00
+S0004,2026-01-14,North,Monitor,3,229.00
+S0005,2026-01-26,North,Monitor,4,229.00
+S0006,2026-01-08,South,Monitor,4,229.00
+S0007,2026-01-14,South,Mouse,1,24.99
+S0008,2026-01-03,South,"Keyboard ""Pro""",5,79.50
+S0009,2026-01-22,South,Monitor,1,229.00
+S0010,2026-01-24,South,"Keyboard ""Pro""",5,79.50
+S0011,2026-01-04,East,"Notebook, A5",5,19.95
+S0012,2026-01-28,East,"Keyboard ""Pro""",2,79.50
+S0013,2026-01-13,East,Mouse,3,24.99
+S0014,2026-01-02,East,"Notebook, A5",4,19.95
+S0015,2026-01-06,East,"Keyboard ""Pro""",4,79.50
+S0016,2026-01-07,West,"Notebook, A5",6,19.95
+S0017,2026-01-11,West,"Notebook, A5",5,19.95
+S0018,2026-01-09,West,Mouse,2,24.99
+S0019,2026-01-08,West,"Keyboard ""Pro""",6,79.50
+S0020,2026-01-21,West,Monitor,1,229.00
+S0021,2026-02-18,North,"Notebook, A5",5,19.95
+S0022,2026-02-20,North,Monitor,4,229.00
+S0023,2026-02-16,North,Mouse,6,24.99
+S0024,2026-02-14,North,"Notebook, A5",6,19.95
+S0025,2026-02-28,North,Monitor,3,229.00
+S0026,2026-02-18,South,"Notebook, A5",1,19.95
+S0027,2026-02-05,South,Mouse,4,24.99
+S0028,2026-02-08,South,Monitor,6,229.00
+S0029,2026-02-24,South,Mouse,2,24.99
+S0030,2026-02-23,South,Monitor,1,229.00
+S0031,2026-02-18,East,"Notebook, A5",6,19.95
+S0032,2026-02-28,East,Monitor,1,229.00
+S0033,2026-02-11,East,Monitor,3,229.00
+S0034,2026-02-12,East,Mouse,2,24.99
+S0035,2026-02-02,East,Mouse,4,24.99
+S0036,2026-02-08,West,Monitor,5,229.00
+S0037,2026-02-05,West,"Notebook, A5",5,19.95
+S0038,2026-02-27,West,"Notebook, A5",3,19.95
+S0039,2026-02-15,West,Mouse,5,24.99
+S0040,2026-02-11,West,"Keyboard ""Pro""",5,79.50
+S0041,2026-03-02,North,Mouse,6,24.99
+S0042,2026-03-16,North,"Notebook, A5",2,19.95
+S0043,2026-03-07,North,"Notebook, A5",3,19.95
+S0044,2026-03-10,North,Mouse,6,24.99
+S0045,2026-03-21,North,"Keyboard ""Pro""",3,79.50
+S0046,2026-03-05,South,"Keyboard ""Pro""",1,79.50
+S0047,2026-03-10,South,Mouse,5,24.99
+S0048,2026-03-26,South,Monitor,5,229.00
+S0049,2026-03-22,South,"Notebook, A5",1,19.95
+S0050,2026-03-27,South,Mouse,3,24.99
+S0051,2026-03-15,East,Monitor,4,229.00
+S0052,2026-03-14,East,Mouse,3,24.99
+S0053,2026-03-23,East,"Keyboard ""Pro""",3,79.50
+S0054,2026-03-17,East,"Keyboard ""Pro""",3,79.50
+S0055,2026-03-09,East,"Keyboard ""Pro""",2,79.50
+S0056,2026-03-11,West,"Notebook, A5",6,19.95
+S0057,2026-03-09,West,"Keyboard ""Pro""",5,79.50
+S0058,2026-03-04,West,Monitor,6,229.00
+S0059,2026-03-19,West,Mouse,4,24.99
+S0060,2026-03-04,West,Mouse,2,24.99
+S0061,2026-04-14,North,Monitor,5,229.00
+S0062,2026-04-02,North,Mouse,4,24.99
+S0063,2026-04-05,North,"Notebook, A5",5,19.95
+S0064,2026-04-06,North,Monitor,4,229.00
+S0065,2026-04-15,North,"Notebook, A5",3,19.95
+S0066,2026-04-28,South,Monitor,4,229.00
+S0067,2026-04-01,South,"Notebook, A5",6,19.95
+S0068,2026-04-26,South,Mouse,6,24.99
+S0069,2026-04-16,South,"Notebook, A5",5,19.95
+S0070,2026-04-15,South,"Notebook, A5",6,19.95
+S0071,2026-04-05,East,"Notebook, A5",3,19.95
+S0072,2026-04-12,East,"Keyboard ""Pro""",5,79.50
+S0073,2026-04-01,East,Monitor,2,229.00
+S0074,2026-04-04,East,Monitor,6,229.00
+S0075,2026-04-02,East,Monitor,3,229.00
+S0076,2026-04-10,West,Monitor,6,229.00
+S0077,2026-04-22,West,"Keyboard ""Pro""",2,79.50
+S0078,2026-04-14,West,"Keyboard ""Pro""",4,79.50
+S0079,2026-04-07,West,Monitor,6,229.00
+S0080,2026-04-06,West,Mouse,5,24.99
+S0081,2026-05-21,North,Monitor,6,229.00
+S0082,2026-05-16,North,Monitor,5,229.00
+S0083,2026-05-14,North,"Keyboard ""Pro""",6,79.50
+S0084,2026-05-13,North,Monitor,6,229.00
+S0085,2026-05-26,North,"Keyboard ""Pro""",1,79.50
+S0086,2026-05-22,South,"Notebook, A5",1,19.95
+S0087,2026-05-13,South,"Notebook, A5",3,19.95
+S0088,2026-05-26,South,"Notebook, A5",3,19.95
+S0089,2026-05-01,South,"Keyboard ""Pro""",2,79.50
+S0090,2026-05-20,South,"Notebook, A5",6,19.95
+S0091,2026-05-17,East,"Notebook, A5",3,19.95
+S0092,2026-05-28,East,"Notebook, A5",4,19.95
+S0093,2026-05-12,East,Monitor,4,229.00
+S0094,2026-05-05,East,"Keyboard ""Pro""",2,79.50
+S0095,2026-05-24,East,"Notebook, A5",1,19.95
+S0096,2026-05-09,West,Mouse,5,24.99
+S0097,2026-05-01,West,Monitor,2,229.00
+S0098,2026-05-13,West,Monitor,1,229.00
+S0099,2026-05-15,West,"Keyboard ""Pro""",5,79.50
+S0100,2026-05-06,West,Mouse,3,24.99
+S0101,2026-06-08,North,"Notebook, A5",6,19.95
+S0102,2026-06-07,North,Monitor,1,229.00
+S0103,2026-06-15,North,Mouse,6,24.99
+S0104,2026-06-13,North,Mouse,2,24.99
+S0105,2026-06-13,North,Monitor,6,229.00
+S0106,2026-06-25,South,"Keyboard ""Pro""",4,79.50
+S0107,2026-06-04,South,"Notebook, A5",3,19.95
+S0108,2026-06-22,South,"Keyboard ""Pro""",6,79.50
+S0109,2026-06-03,South,"Keyboard ""Pro""",5,79.50
+S0110,2026-06-13,South,"Keyboard ""Pro""",2,79.50
+S0111,2026-06-11,East,Mouse,1,24.99
+S0112,2026-06-21,East,Monitor,4,229.00
+S0113,2026-06-14,East,"Notebook, A5",1,19.95
+S0114,2026-06-07,East,Monitor,3,229.00
+S0115,2026-06-21,East,Monitor,4,229.00
+S0116,2026-06-06,West,"Notebook, A5",4,19.95
+S0117,2026-06-27,West,"Keyboard ""Pro""",1,79.50
+S0118,2026-06-15,West,Mouse,5,24.99
+S0119,2026-06-11,West,"Notebook, A5",5,19.95
+S0120,2026-06-22,West,Mouse,1,24.99

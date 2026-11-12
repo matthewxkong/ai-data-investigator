@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "generator_version": 1,
+  "fixture_seed": 20261112,
+  "split": "heldout",
+  "status": "reserved_not_frozen",
+  "cases": [
+    {"id":"held_sales_west_share","dataset":"sales","question":"What percentage of total sales revenue comes from West? Define revenue as quantity times unit_price.","behavior":"answer"},
+    {"id":"held_sales_region_growth","dataset":"sales","question":"For each region, compare March and April revenue and report the absolute USD change.","behavior":"answer"},
+    {"id":"held_ticket_resolution_average","dataset":"tickets","question":"For resolved tickets only, what is mean resolution_hours by priority?","behavior":"answer"},
+    {"id":"held_ticket_backlog_month","dataset":"tickets","question":"Count currently unresolved tickets by their UTC creation month, treating open and escalated as unresolved.","behavior":"answer"},
+    {"id":"held_inventory_available_category","dataset":"inventory","question":"Sum available units by category at the June 30 snapshot. Available is on_hand minus reserved.","behavior":"answer"},
+    {"id":"held_inventory_reserved_share","dataset":"inventory","question":"For each warehouse, what percentage of total on-hand units are reserved? Explain any zero denominator.","behavior":"answer"},
+    {"id":"held_sales_best_region","dataset":"sales","question":"Show me the best region.","behavior":"clarify"},
+    {"id":"held_ticket_best_team","dataset":"tickets","question":"Which support team performs best?","behavior":"clarify"},
+    {"id":"held_inventory_forecast","dataset":"inventory","question":"Precisely forecast next year's stock levels from this single inventory snapshot.","behavior":"explain_limit"},
+    {"id":"held_sales_causality","dataset":"sales","question":"Prove that a promotion caused the change in West revenue.","behavior":"explain_limit"}
+  ]
+}
