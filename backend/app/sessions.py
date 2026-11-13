@@ -9,7 +9,11 @@ from dataclasses import dataclass, field
 from app.database import Database
 
 SESSION_COOKIE = "adi_session"
-SESSION_TTL_SECONDS = 24 * 60 * 60
+SESSION_TTL_SECONDS = 30 * 24 * 60 * 60
+
+
+class SessionExpiredError(RuntimeError):
+    """The owning upload session expired before import publication."""
 
 
 @dataclass(frozen=True)
