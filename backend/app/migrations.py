@@ -54,6 +54,23 @@ MIGRATIONS = (
                 ON investigations(session_id, created_at, id)""",
         ),
     ),
+    Migration(
+        version=2,
+        name="csv_imports_and_upload_sessions",
+        statements=(
+            """CREATE TABLE upload_sessions (
+                id TEXT PRIMARY KEY,
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL
+            )""",
+            """CREATE TABLE dataset_imports (
+                dataset_id TEXT PRIMARY KEY REFERENCES datasets(id) ON DELETE CASCADE,
+                sha256 TEXT NOT NULL CHECK(length(sha256) = 64),
+                delimiter TEXT NOT NULL,
+                columns_json TEXT NOT NULL
+            )""",
+        ),
+    ),
 )
 
 

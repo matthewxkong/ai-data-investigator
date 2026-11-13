@@ -36,7 +36,7 @@ def test_metadata_survives_full_application_recreation(settings: Settings) -> No
         assert restored.status == InvestigationStatus.COMPLETED
         assert restored.dataset_id == dataset.id
         assert restarted.datasets.get(dataset.id, session_id="other") is None
-        assert client.get("/api/ready").json()["metadata_schema_version"] == 1
+        assert client.get("/api/ready").json()["metadata_schema_version"] == 2
 
 
 def test_liveness_survives_lost_storage_and_readiness_recovers(settings: Settings) -> None:
@@ -114,7 +114,7 @@ def test_incomplete_persisted_schema_fails_startup_without_recreating_tables(
             ).fetchone()
             is None
         )
-        assert connection.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] == 1
+        assert connection.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] == 2
 
 
 def test_concurrent_startup_serializes_migrations_once(tmp_path: Path) -> None:
@@ -123,7 +123,7 @@ def test_concurrent_startup_serializes_migrations_once(tmp_path: Path) -> None:
     with ThreadPoolExecutor(max_workers=2) as pool:
         list(pool.map(lambda database: database.initialize(), databases))
     with databases[0].connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] == 1
+        assert connection.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] == 2
     assert all(database.is_ready() for database in databases)
 
 

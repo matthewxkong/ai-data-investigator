@@ -29,7 +29,7 @@ def test_failed_upgrade_rolls_back_ddl_and_preserves_existing_schema(
     database = Database(tmp_path / "metadata.sqlite3")
     database.initialize()
     failed_upgrade = migrations.Migration(
-        version=2,
+        version=3,
         name="broken_upgrade",
         statements=(
             "CREATE TABLE rollback_probe(id INTEGER)",
@@ -40,7 +40,7 @@ def test_failed_upgrade_rolls_back_ddl_and_preserves_existing_schema(
     with pytest.raises(MetadataStartupError, match="schema compatibility"):
         database.initialize()
     with database.connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] == 1
+        assert connection.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] == 2
         assert (
             connection.execute(
                 "SELECT name FROM sqlite_master WHERE name = 'rollback_probe'"
@@ -56,7 +56,7 @@ def test_incompatible_history_is_rejected_without_rewriting_it(tmp_path: Path, c
     with database.connection(write=True) as connection:
         if change == "unknown_version":
             connection.execute(
-                "INSERT INTO schema_migrations VALUES (2, 'future', 'unknown', '2026-11-10')"
+                "INSERT INTO schema_migrations VALUES (3, 'future', 'unknown', '2026-11-10')"
             )
         else:
             connection.execute("UPDATE schema_migrations SET checksum = 'modified'")

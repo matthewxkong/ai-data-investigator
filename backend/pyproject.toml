@@ -4,6 +4,7 @@ version = "0.0.1"
 description = "Evidence-backed CSV investigation assistant API"
 requires-python = ">=3.12,<3.14"
 dependencies = [
+    "duckdb>=1.4,<3",
     "fastapi>=0.115,<1",
     "pydantic-settings>=2.7,<3",
     "uvicorn>=0.30,<1",
@@ -11,7 +12,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "duckdb>=1.4,<3",
     "httpx2>=2.16.0",
     "mypy>=1.13,<2",
     "pytest>=8,<10",

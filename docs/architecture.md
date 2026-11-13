@@ -45,7 +45,11 @@ Day two provides validated backend settings, a lifespan-managed SQLite metadata 
 
 The API exposes `/api/health` for liveness and `/api/ready` for initialized, reachable metadata with a compatible schema. Readiness probes never recreate missing files or repair damaged state. Errors use a consistent envelope with a server-generated request ID and omit request values and raw exception details. Unexpected pre-response request failures are contained before the ASGI server's traceback logger receives them.
 
-The frontend still checks the health endpoint; its connected indicator is not a claim that the metadata database, model provider, or analytical worker is ready. No public dataset/investigation HTTP routes, session authentication, ingestion, model adapter, or generated-SQL execution are enabled yet. Metadata status storage does not implement agent state-transition policy.
+The frontend still checks the health endpoint; its connected indicator is not a claim that the metadata database, model provider, or analytical worker is ready. Investigation HTTP routes, account authentication, model integration, and generated-SQL execution remain future work. Metadata status storage does not implement agent state-transition policy.
+
+W04 extends this foundation with local CSV creation and owned metadata lookup. Request bytes stream into a private temporary directory before bounded UTF-8/CSV validation. Canonical text-preserving CSV is imported by a separate fixed-operation DuckDB process with a path allowlist, disabled external access/extensions, a database memory limit, and a parent-enforced timeout. This import process is not an OS-level sandbox or the future arbitrary-query worker. Model/provider environment variables are not passed to it.
+
+Each successful upload receives a fresh dataset/version pair and retains the exact source bytes. The server publishes its private artifact directory and commits session/dataset/import metadata transactionally, removing artifacts on ordinary commit failures. SQLite and filesystem publication are separate operations; process termination can leave private unreferenced artifacts requiring maintenance. See [the ingestion contract](csv-ingestion.md). The current frontend does not yet expose upload controls.
 
 ## Consequences
 
