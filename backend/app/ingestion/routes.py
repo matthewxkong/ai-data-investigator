@@ -48,7 +48,7 @@ def upload_services(request: Request) -> Services:
 async def upload_csv(
     request: Request,
     response: Response,
-    filename: Annotated[str, Header(alias="X-Filename", max_length=2300)] = "dataset.csv",
+    filename: Annotated[str, Header(alias="X-Filename", max_length=3060)] = "dataset.csv",
     delimiter: Annotated[Delimiter | None, Query()] = None,
 ) -> DatasetResponse:
     """Upload raw UTF-8 CSV bytes; X-Filename can be UTF-8 percent-encoded."""
