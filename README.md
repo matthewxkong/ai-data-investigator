@@ -16,7 +16,7 @@ The first demonstration will answer: **How did monthly revenue change by region?
 
 ## Current status
 
-Day-two foundation: a FastAPI backend with validated settings, transactional SQLite metadata migrations, session-scoped internal repositories, liveness/readiness endpoints, and consistent API errors. The React frontend reports its API connection. CSV ingestion, profiling, charts, and model-backed investigations remain scheduled capabilities. No API key is required.
+W04 adds local CSV ingestion: streamed uploads, bounded validation, safe header mappings, a text-preserving DuckDB artifact, and immutable versions with source checksums. Server-issued session cookies scope uploaded metadata. The React frontend still reports its API connection; browser upload controls, type inference, profiling, charts, and model-backed investigations are later milestones. No API key is required.
 
 ## Run locally
 
@@ -42,7 +42,23 @@ npm run dev
 
 Open <http://127.0.0.1:5173>. The page should report **API connected**. The API health endpoint is <http://127.0.0.1:8000/api/health> and interactive API documentation is at <http://127.0.0.1:8000/docs>.
 
-Metadata storage is initialized on application startup. Readiness at <http://127.0.0.1:8000/api/ready> should return `{"status":"ready","metadata_schema_version":1}`. Liveness reports that the process responds; readiness checks only the metadata foundation, not a model provider or analytical worker.
+Metadata storage is initialized on application startup. Readiness at <http://127.0.0.1:8000/api/ready> should return `{"status":"ready","metadata_schema_version":2}`. Liveness reports that the process responds; readiness checks only the metadata foundation, not a model provider or analytical worker.
+
+## Upload a local CSV
+
+With the API running, execute this from the repository root. On Windows use `curl.exe`; on macOS/Linux use `curl`.
+
+```sh
+curl.exe -c cookies.txt -b cookies.txt -H "Content-Type: text/csv" -H "X-Filename: sales.csv" --data-binary @fixtures/generated/sales.csv http://127.0.0.1:8000/api/datasets
+```
+
+The API accepts raw file bytes. Keep the returned session cookie to retrieve metadata with `GET /api/datasets/<id>`. The response includes dataset ID, immutable version, row/byte counts, SHA-256 of the exact source, delimiter, and original/safe column-name mappings. It does not expose storage paths or session credentials. Cookie jars are credentials; the example `cookies.txt` is ignored by Git.
+
+Uploads accept UTF-8 with optional BOM, comma/semicolon/tab delimiters, standard CSV quoting and quoted newlines. All imported columns remain VARCHAR; blank fields become NULL. Use `?delimiter=%3B` for an explicit semicolon delimiter. Automatic detection considers comma, semicolon, and tab; ambiguous/single-column inputs fall back to comma.
+
+Initial caps: **25,000,000 bytes, 100,000 data rows, 256 columns**, 256 characters per header, 131,072 per field, and 1,048,576 per physical line. Two imports can run concurrently per API process. The fixed-operation DuckDB child has a 256 MB database-memory budget and 45-second import timeout. Invalid inputs leave no published artifacts or metadata. See [the upload contract](docs/csv-ingestion.md) for exact behavior and recovery limits.
+
+Uploads are for local development/test use and are disabled in production mode. Published artifacts are stored locally under the configured data directory; no model call is made. Dataset listing, preview, deletion, and user-account authentication remain later milestones.
 
 ## Backend configuration and persistence
 
@@ -50,16 +66,22 @@ Configuration works without an environment file. To customize it, copy `backend/
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| `ADI_ENVIRONMENT` | `development` | `development`, `test`, or `production`; descriptive environment tag |
+| `ADI_ENVIRONMENT` | `development` | `development`, `test`, or `production`; production disables local dataset routes |
 | `ADI_DATA_DIR` | `backend/data` | Persistent application-data directory; relative values resolve against `backend/` |
 | `ADI_SQLITE_TIMEOUT_SECONDS` | `5` | SQLite busy timeout, greater than zero and at most 30 seconds |
 | `ADI_MODEL_API_KEY` | Unset | Optional redacted backend secret; reserved for later provider integration |
+| `ADI_UPLOADS_ENABLED` | `true` | Enable local ingestion; production mode always disables it |
+| `ADI_UPLOAD_MAX_BYTES` | `25000000` | Maximum source bytes; can be reduced |
+| `ADI_UPLOAD_MAX_ROWS` | `100000` | Maximum nonblank data records; can be reduced |
+| `ADI_UPLOAD_MAX_COLUMNS` | `256` | Maximum columns; can be reduced |
+| `ADI_IMPORT_TIMEOUT_SECONDS` | `45` | DuckDB child-process timeout, at most 120 seconds |
+| `ADI_UPLOAD_ALLOWED_ORIGINS` | Local ports 5173/8000 | JSON list of exact permitted browser origins for a custom local port |
 
 The application creates `metadata.sqlite3` inside the data directory. Startup applies ordered, checksummed migrations in one transaction and preserves records across restarts. Unknown or modified migration history, missing schema tables, corrupt files, or unusable storage fail startup with an actionable message. Failed upgrades roll back; they do not reset the database. Restore a compatible backup when necessary. Never delete the database as a routine upgrade step.
 
 Keep custom data directories and backups outside tracked source paths. Git ignores the default data directories, SQLite database/journal files, and environment files. Do not commit private data or credentials. To back up this initial SQLite setup, stop the application before copying the data directory.
 
-Dataset and investigation repositories are internal Python services on `application.state.services`, with ownership-scoped reads and a composite database foreign key preventing cross-session dataset links. The current HTTP API does not expose metadata creation/list endpoints, session authentication, CSV ingestion, or investigation execution. The repository layer persists metadata and statuses; agent orchestration and transition policy come later.
+Dataset and investigation repositories are Python services on `application.state.services`, with ownership-scoped reads and a composite database foreign key preventing cross-session dataset links. The API creates imported datasets and retrieves their metadata through a server-issued upload session; it does not accept caller-chosen owner IDs. The repository layer persists investigation statuses; agent orchestration and account authentication come later.
 
 See [the API contract](docs/api.md) for endpoints, response examples, and error handling.
 
@@ -132,10 +154,11 @@ uv run --locked python -m app.fixtures --check
 Use `--seed 7 --output <directory>` for a separate reproducible bundle. Generation never
 rewrites the checked-in reference answers. Ten development questions have standalone SQL
 and fixed expected results, checked in DuckDB against an independent Python/Decimal oracle.
-DuckDB is a development dependency for these trusted checks; there is no analytical SQL
+DuckDB is also used by the controlled ingestion worker; there is no analytical SQL
 HTTP endpoint or model-generated SQL execution in this milestone.
 
 See [the fixture dictionary](fixtures/README.md) for columns, units, metric definitions,
 quality variants, reproducibility, and development/reserved question separation. The
 public held-out manifest is an initial reserved split, not a claim of unseen-task accuracy.
 See [W03 progress](docs/progress/w03.md) for this workday's implementation and evidence.
+W04 was explicitly brought forward to November 13; see [W04 progress](docs/progress/w04.md).

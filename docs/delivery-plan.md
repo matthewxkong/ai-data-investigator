@@ -1,12 +1,16 @@
 # AI Data Investigation Assistant: 60-day delivery plan
 
-**Dates:** November 9, 2026 through January 7, 2027, inclusive. **Timezone:** America/Los_Angeles. **Owner:** matthewxkong. **Holiday calendar:** United States federal holidays, as confirmed by the user.
+**Dates:** November 9, 2026 through January 7, 2027, inclusive. **Timezone:** America/New_York (current execution environment). **Owner:** matthewxkong. **Holiday calendar:** United States federal holidays, as confirmed by the user.
 
-There are **42 working days and 18 rest days**. Workdays are Sunday through Thursday, excluding federal holidays. Every Friday and Saturday is completely free of planned coding, commits, PR review, issue triage, and catch-up work. November 11 and November 26 remove two additional workdays. December 25 and January 1 already fall on Fridays. Holidays are taken on the published federal calendar dates; this personal schedule does not add a substitute day for holidays that already fall on Friday. No state, employer, or additional religious holidays have been assumed. Recheck the calendar if an additional federal holiday is declared during the period.
+**Original baseline:** 42 working days and 18 rest days. Workdays are Sunday through Thursday, excluding federal holidays. Except for the owner-authorized November 13 adjustment below, every Friday and Saturday is completely free of planned coding, commits, PR review, issue triage, and catch-up work. November 11 and November 26 remove two additional workdays. December 25 and January 1 already fall on Fridays. Holidays are taken on the published federal calendar dates; this personal schedule does not add a substitute day for holidays that already fall on Friday. No state, employer, or additional religious holidays have been assumed. Recheck the calendar if an additional federal holiday is declared during the period.
 
 **Capacity assumption:** about five focused hours per working day, approximately 210 hours total. A workable day is 15 minutes of issue triage, three hours of implementation, one hour of relevant verification, 30 minutes of review, and 15 minutes of notes. At substantially less time, trim scope using the rules below before increasing hours or using rest days.
 
-**GitHub activity:** 6-10 meaningful commits per working day, or an estimated 252-420 development commits over the plan. Each day below offers eight candidate commit units, 336 in total. Combine units when they belong together; split only where there is a distinct reviewable change. These are work packages rather than a requirement to manufacture activity. Each day also has one issue-sized outcome, for 42 planned daily issues, grouped into 21 focused PRs. Additional bug issues are created only for actual findings. All issue and PR identifiers in this plan are local planning labels; nothing has been opened or published to GitHub.
+**GitHub activity:** 6-10 meaningful commits per working day, or an estimated 252-420 development commits over the plan. Each day below offers eight candidate commit units, 336 in total. Combine units when they belong together; split only where there is a distinct reviewable change. These are work packages rather than a requirement to manufacture activity. Each day also has one issue-sized outcome, for 42 planned daily issues, grouped into 21 focused PRs. Additional bug issues are created only for actual findings. W01-W42 and P01-P21 are planning labels rather than GitHub issue/PR numbers. Actual published issues and PRs are recorded in the progress notes.
+
+## Approved schedule adjustment
+
+On November 13 the owner explicitly requested starting W04 immediately. CSV ingestion therefore moves from Sunday, November 15 to Friday, November 13 as a one-time rest-day exception. November 15 becomes review/buffer rather than a second implementation day. Saturday, November 14 and all subsequent Friday/Saturday and federal-holiday breaks remain unchanged. W05 remains Monday, November 16. The capacity totals above describe the original baseline; the adjusted calendar has 42 feature-work days, one review/buffer day, and 17 full rest days.
 
 ## The product to finish
 
@@ -84,9 +88,9 @@ W numbers count actual working days. D numbers count calendar days, including re
 | D02 | 2026-11-10 | Tue | W02: Build the API and persistence foundation | Review / merge P01 if checks pass |
 | D03 | 2026-11-11 | Wed | REST: Veterans Day | None |
 | D04 | 2026-11-12 | Thu | W03: Create synthetic data and expected answers | Open draft P02 |
-| D05 | 2026-11-13 | Fri | REST: weekly rest | None |
+| D05 | 2026-11-13 | Fri | W04: CSV ingestion, owner-approved early execution | Open W04 PR for owner review |
 | D06 | 2026-11-14 | Sat | REST: weekly rest | None |
-| D07 | 2026-11-15 | Sun | W04: Implement CSV ingestion | Review / merge P02 if checks pass |
+| D07 | 2026-11-15 | Sun | Review / buffer: W04 implemented early | Owner review / merge if checks pass |
 | D08 | 2026-11-16 | Mon | W05: Infer and explain the dataset schema | Open draft P03 |
 | D09 | 2026-11-17 | Tue | W06: Build deterministic data profiling | Review / merge P03 if checks pass |
 | D10 | 2026-11-18 | Wed | W07: Finish the dataset lifecycle | Open draft P04 |
@@ -196,7 +200,9 @@ Each W entry is one planned issue. Create it at the start of that workday with t
 - [ ] Record data dictionaries and metric definitions.
 - [ ] Add fixture generation command and reproducibility checks.
 
-### W04 / D07 - Sunday, November 15, 2026
+### W04 / D05 - Friday, November 13, 2026 (brought forward)
+
+Originally scheduled November 15; that slot is now review/buffer. Implementation evidence: [W04 progress](progress/w04.md). W03 shipped separately in PR #6; W04 has its own focused PR rather than the original combined P02.
 
 **Issue W04: Implement CSV ingestion.** Paired PR: P02.
 
@@ -204,14 +210,14 @@ Each W entry is one planned issue. Create it at the start of that workday with t
 
 **Candidate commits:**
 
-- [ ] Implement streamed upload endpoint.
-- [ ] Enforce initial file byte and row limits.
-- [ ] Normalize UTF-8 headers and safe identifiers.
-- [ ] Handle delimiters quoting and blank lines.
-- [ ] Import through controlled DuckDB ingestion.
-- [ ] Store checksum and immutable dataset version.
-- [ ] Cover malformed empty and oversized files.
-- [ ] Document import limits and merge P02.
+- [x] Implement streamed upload endpoint.
+- [x] Enforce initial file byte and row limits.
+- [x] Normalize UTF-8 headers and safe identifiers.
+- [x] Handle delimiters quoting and blank lines.
+- [x] Import through controlled DuckDB ingestion.
+- [x] Store checksum and immutable dataset version.
+- [x] Cover malformed empty and oversized files.
+- [x] Document import limits and prepare W04 for owner review. Owner approval and merge remain pending.
 
 ### W05 / D08 - Monday, November 16, 2026
 

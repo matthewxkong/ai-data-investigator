@@ -29,6 +29,7 @@ data/
 *.db
 *.db-*
 *.log
+cookies.txt
 
 # Editor and operating-system files
 .idea/

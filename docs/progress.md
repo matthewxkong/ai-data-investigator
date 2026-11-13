@@ -1,3 +1,5 @@
+> Current milestone: [W04 CSV ingestion, November 13](progress/w04.md). W02 and W03 are merged. W04 awaits owner review; W05 remains November 16. The sections below retain milestone-specific historical evidence.
+
 # Delivery progress
 
 ## W01 / November 9, 2026
@@ -34,7 +36,7 @@ These day-one checks cover the original foundation, before metadata persistence 
 
 ## W02 / November 10, 2026
 
-Status: implemented on `work/w02-api-persistence`, awaiting owner review and merge. Issue #2 tracks acceptance; it remains open until the Day 2 PR is merged. The earlier foundation merge auto-closed that issue before implementation, so it was reopened.
+Status: merged in PR #4. Issue #2 tracked acceptance. The earlier foundation merge auto-closed that issue before implementation, so it was reopened until the Day 2 implementation was merged.
 
 Completed work packages:
 
@@ -60,6 +62,6 @@ GitHub-hosted check results are attached to the Day 2 PR after publication. Appr
 
 This milestone implements internal metadata services, not public dataset/investigation HTTP routes, authentication, CSV ingestion, an analytical worker, or a model provider. The frontend's connected indicator continues to describe process liveness only.
 
-## Next working day: W03 / November 12, 2026
+## W03 / November 12, 2026 (subsequently completed in PR #6)
 
 November 11 is Veterans Day and remains a rest day. On Thursday, November 12, create reproducible synthetic sales, support-ticket, and inventory datasets, messy variants, metric definitions, and development/reference questions. Keep held-out evaluation cases separate from development cases as specified in the delivery plan.
