@@ -27,6 +27,6 @@ def test_startup_initializes_storage_and_exposes_readiness(settings: Settings) -
     with TestClient(application) as client:
         response = client.get("/api/ready")
         assert response.status_code == 200
-        assert response.json() == {"status": "ready", "metadata_schema_version": 1}
+        assert response.json() == {"status": "ready", "metadata_schema_version": 2}
         assert settings.database_path.exists()
     assert not application.state.started

@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     data_dir: Path = BACKEND_ROOT / "data"
     sqlite_timeout_seconds: float = Field(default=5.0, gt=0, le=30)
     model_api_key: SecretStr | None = Field(default=None, repr=False)
+    uploads_enabled: bool = True
+    upload_max_bytes: int = Field(default=25_000_000, gt=0, le=25_000_000)
+    upload_max_rows: int = Field(default=100_000, gt=0, le=100_000)
+    upload_max_columns: int = Field(default=256, gt=0, le=256)
+    import_timeout_seconds: float = Field(default=45.0, gt=0, le=120)
 
     @field_validator("data_dir")
     @classmethod

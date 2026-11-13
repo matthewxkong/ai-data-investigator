@@ -23,6 +23,10 @@ def validate_schema(connection: sqlite3.Connection) -> None:
         "SELECT id, dataset_id, session_id, question, status, created_at, updated_at "
         "FROM investigations LIMIT 0"
     )
+    connection.execute("SELECT id, created_at, expires_at FROM upload_sessions LIMIT 0")
+    connection.execute(
+        "SELECT dataset_id, sha256, delimiter, columns_json FROM dataset_imports LIMIT 0"
+    )
 
 
 class Database:
