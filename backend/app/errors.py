@@ -62,7 +62,7 @@ def error_response(
     return JSONResponse(
         status_code=status_code,
         content=body.model_dump(mode="json"),
-        headers={**(headers or {}), "X-Request-ID": request_id},
+        headers={**(headers or {}), "X-Request-ID": request_id, "Cache-Control": "no-store"},
     )
 
 

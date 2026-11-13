@@ -27,6 +27,14 @@ class Settings(BaseSettings):
     upload_max_rows: int = Field(default=100_000, gt=0, le=100_000)
     upload_max_columns: int = Field(default=256, gt=0, le=256)
     import_timeout_seconds: float = Field(default=45.0, gt=0, le=120)
+    upload_allowed_origins: list[str] = Field(
+        default_factory=lambda: [
+            "http://127.0.0.1:5173",
+            "http://localhost:5173",
+            "http://127.0.0.1:8000",
+            "http://localhost:8000",
+        ]
+    )
 
     @field_validator("data_dir")
     @classmethod

@@ -9,6 +9,7 @@ from pydantic import BaseModel
 
 from app.config import Settings
 from app.errors import ApiError, ErrorResponse, install_error_handlers
+from app.ingestion.routes import router as dataset_router
 from app.migrations import MIGRATIONS
 from app.services import create_services
 
@@ -38,7 +39,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application = FastAPI(
         title="AI Data Investigator",
         version="0.0.1",
-        description="Metadata foundation; CSV and agent endpoints are not available yet.",
+        description="Local CSV ingestion and metadata; analytical agents are not enabled.",
         lifespan=lifespan,
         responses={
             404: {"model": ErrorResponse, "description": "Resource not found."},
@@ -50,6 +51,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.state.services = services
     application.state.started = False
     install_error_handlers(application)
+    application.include_router(dataset_router)
 
     @application.get("/api/health", response_model=HealthResponse, tags=["system"])
     def health() -> HealthResponse:
