@@ -27,6 +27,9 @@ def validate_schema(connection: sqlite3.Connection) -> None:
     connection.execute(
         "SELECT dataset_id, sha256, delimiter, columns_json FROM dataset_imports LIMIT 0"
     )
+    connection.execute(
+        "SELECT dataset_id, revision, overrides_json FROM dataset_schema_overrides LIMIT 0"
+    )
 
 
 class Database:
