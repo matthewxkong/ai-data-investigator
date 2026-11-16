@@ -51,6 +51,8 @@ W04 extends this foundation with local CSV creation and owned metadata lookup. R
 
 Each successful upload receives a fresh dataset/version pair and retains the exact source bytes. The server publishes its private artifact directory and commits session/dataset/import metadata transactionally, removing artifacts on ordinary commit failures. SQLite and filesystem publication are separate operations; process termination can leave private unreferenced artifacts requiring maintenance. See [the ingestion contract](csv-ingestion.md). The current frontend does not yet expose upload controls.
 
+W05 adds deterministic semantic schema inspection over all accepted rows. A fixed read-only DuckDB scan checks physical columns and row counts, accumulates bounded lexical evidence and distinct-value digests, and emits no raw-cell samples. Numeric, boolean, calendar/timestamp, and categorical rules preserve uncertain inputs as text with warnings. Explicit type overrides are validated against every non-null value and persisted separately with optimistic revisions. These annotations do not rewrite immutable artifacts or dataset versions. The scan runs in the API worker thread with workload/concurrency limits; it is not an arbitrary-query endpoint, OS sandbox, or separately timed subprocess. See [schema inference](schema-inference.md).
+
 ## Consequences
 
 One dataset and one provider keep the first release understandable. The isolated worker adds operational overhead but creates a meaningful boundary for generated queries. A frontend/API split requires two development processes and an explicit production routing configuration. Evaluation and evidence integrity are part of product behavior throughout development.

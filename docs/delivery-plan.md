@@ -91,7 +91,7 @@ W numbers count actual working days. D numbers count calendar days, including re
 | D05 | 2026-11-13 | Fri | W04: CSV ingestion, owner-approved early execution | Open W04 PR for owner review |
 | D06 | 2026-11-14 | Sat | REST: weekly rest | None |
 | D07 | 2026-11-15 | Sun | Review / buffer: W04 implemented early | Owner review / merge if checks pass |
-| D08 | 2026-11-16 | Mon | W05: Infer and explain the dataset schema | Open draft P03 |
+| D08 | 2026-11-16 | Mon | W05: Infer and explain the dataset schema | Separate W05 PR, dependent on W04 PR #8 |
 | D09 | 2026-11-17 | Tue | W06: Build deterministic data profiling | Review / merge P03 if checks pass |
 | D10 | 2026-11-18 | Wed | W07: Finish the dataset lifecycle | Open draft P04 |
 | D11 | 2026-11-19 | Thu | W08: Establish the trusted SQL baseline | Review / merge P04 if checks pass |
@@ -221,20 +221,20 @@ Originally scheduled November 15; that slot is now review/buffer. Implementation
 
 ### W05 / D08 - Monday, November 16, 2026
 
-**Issue W05: Infer and explain the dataset schema.** Paired PR: P03.
+**Issue W05: Infer and explain the dataset schema.** Original paired PR: P03. Implemented November 16 in a separate dependent W05 PR because W04 PR #8 remains open. Actual tracking: issue #9. See [W05 evidence](progress/w05.md). W06 profiling remains November 17.
 
 **Done when:** Users can inspect inferred types and see warnings when numeric or date interpretation is uncertain.
 
 **Candidate commits:**
 
-- [ ] Implement schema inspection service.
-- [ ] Detect numeric categorical date and boolean columns.
-- [ ] Flag ambiguous dates and mixed types.
-- [ ] Preserve original and normalized column names.
-- [ ] Return schema through typed API.
-- [ ] Add explicit user type-override contract.
-- [ ] Check inference on messy synthetic fixtures.
-- [ ] Document inference rules and uncertainty.
+- [x] Implement schema inspection service.
+- [x] Detect numeric categorical date and boolean columns.
+- [x] Flag ambiguous dates and mixed types.
+- [x] Preserve original and normalized column names.
+- [x] Return schema through typed API.
+- [x] Add explicit user type-override contract.
+- [x] Check inference on messy synthetic fixtures.
+- [x] Document inference rules and uncertainty.
 
 ### W06 / D09 - Tuesday, November 17, 2026
 

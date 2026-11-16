@@ -1,4 +1,4 @@
-> Current milestone: [W04 CSV ingestion, November 13](progress/w04.md). W02 and W03 are merged. W04 awaits owner review; W05 remains November 16. The sections below retain milestone-specific historical evidence.
+> Current milestone: [W05 schema inference, November 16](progress/w05.md). W04 PR #8 and the dependent W05 PR await owner review. W06 profiling remains November 17. The sections below retain milestone-specific historical evidence.
 
 # Delivery progress
 
