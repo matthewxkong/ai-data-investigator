@@ -43,10 +43,10 @@ class SchemaInspector:
                     "autoload_known_extensions": "false",
                     "autoinstall_known_extensions": "false",
                     "allow_community_extensions": "false",
+                    "enable_external_access": "false",
+                    "lock_configuration": "true",
                 },
             ) as connection:
-                connection.execute("SET enable_external_access = false")
-                connection.execute("SET lock_configuration = true")
                 cursor = connection.execute("SELECT * FROM data LIMIT 100001")
                 description = cursor.description
                 if description is None or [(item[0], str(item[1])) for item in description] != [
