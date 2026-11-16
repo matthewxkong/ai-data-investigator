@@ -7,6 +7,8 @@ from app.database import Database
 from app.ingestion.service import IngestionService
 from app.repositories.datasets import DatasetRepository
 from app.repositories.investigations import InvestigationRepository
+from app.schema.repository import SchemaRepository
+from app.schema.service import SchemaService
 from app.sessions import SessionStore
 
 
@@ -18,17 +20,20 @@ class Services:
     investigations: InvestigationRepository
     sessions: SessionStore
     ingestion: IngestionService
+    schema: SchemaService
 
 
 def create_services(settings: Settings) -> Services:
     database = Database(settings.database_path, timeout_seconds=settings.sqlite_timeout_seconds)
     datasets = DatasetRepository(database)
     sessions = SessionStore(database)
+    ingestion = IngestionService(settings, datasets, sessions)
     return Services(
         settings=settings,
         database=database,
         datasets=datasets,
         investigations=InvestigationRepository(database),
         sessions=sessions,
-        ingestion=IngestionService(settings, datasets, sessions),
+        ingestion=ingestion,
+        schema=SchemaService(ingestion, SchemaRepository(database)),
     )

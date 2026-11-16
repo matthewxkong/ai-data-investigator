@@ -1,6 +1,6 @@
 # Local CSV ingestion
 
-W04 adds backend ingestion and metadata lookup. Upload controls, schema inference, preview, deletion, profiling, and generated SQL are later work. No model or API key is involved.
+W04 adds backend ingestion and metadata lookup. W05 now provides [semantic schema inference](schema-inference.md) over the imported text. Upload controls, preview, deletion, profiling, and generated SQL remain later work. No model or API key is involved.
 
 ## Upload and retrieve metadata
 

@@ -16,7 +16,7 @@ The first demonstration will answer: **How did monthly revenue change by region?
 
 ## Current status
 
-W04 adds local CSV ingestion: streamed uploads, bounded validation, safe header mappings, a text-preserving DuckDB artifact, and immutable versions with source checksums. Server-issued session cookies scope uploaded metadata. The React frontend still reports its API connection; browser upload controls, type inference, profiling, charts, and model-backed investigations are later milestones. No API key is required.
+W05 adds full-row semantic schema inspection with evidence, uncertainty warnings, and validated, persistent type overrides. W04 supplies local CSV ingestion, immutable source checksums/versions, and server-issued session ownership. The React frontend still reports its API connection; browser upload/schema controls, profiling, charts, and model-backed investigations are later milestones. No API key is required.
 
 ## Run locally
 
@@ -42,7 +42,7 @@ npm run dev
 
 Open <http://127.0.0.1:5173>. The page should report **API connected**. The API health endpoint is <http://127.0.0.1:8000/api/health> and interactive API documentation is at <http://127.0.0.1:8000/docs>.
 
-Metadata storage is initialized on application startup. Readiness at <http://127.0.0.1:8000/api/ready> should return `{"status":"ready","metadata_schema_version":2}`. Liveness reports that the process responds; readiness checks only the metadata foundation, not a model provider or analytical worker.
+Metadata storage is initialized on application startup. Readiness at <http://127.0.0.1:8000/api/ready> should return `{"status":"ready","metadata_schema_version":3}`. Liveness reports that the process responds; readiness checks only the metadata foundation, not a model provider or analytical worker.
 
 ## Upload a local CSV
 
@@ -59,6 +59,10 @@ Uploads accept UTF-8 with optional BOM, comma/semicolon/tab delimiters, standard
 Initial caps: **25,000,000 bytes, 100,000 data rows, 256 columns**, 256 characters per header, 131,072 per field, and 1,048,576 per physical line. Two imports can run concurrently per API process. The fixed-operation DuckDB child has a 256 MB database-memory budget and 45-second import timeout. Invalid inputs leave no published artifacts or metadata. See [the upload contract](docs/csv-ingestion.md) for exact behavior and recovery limits.
 
 Uploads are for local development/test use and are disabled in production mode. Published artifacts are stored locally under the configured data directory; no model call is made. Dataset listing, preview, deletion, and user-account authentication remain later milestones.
+
+## Inspect a dataset schema
+
+Inspect an uploaded dataset with `GET /api/datasets/<id>/schema` using the same session cookie. The response explains inferred integer, decimal, boolean, date, datetime, categorical, or text types without returning raw cells. Ambiguous dates, mixed types, and leading-zero identifiers receive conservative warnings. `PUT /api/datasets/<id>/schema/overrides` replaces validated semantic overrides using an expected revision; it does not modify source data or physical types. See [schema rules and examples](docs/schema-inference.md).
 
 ## Backend configuration and persistence
 
@@ -122,6 +126,7 @@ GitHub Actions is configured to run these checks on Windows and Linux after publ
 | `docs/mvp-scope.md` | User-visible behavior, release gates, and deferred work |
 | `docs/architecture.md` | Components, execution boundary, and privacy decisions |
 | `docs/api.md` | Implemented endpoints, errors, and metadata lifecycle |
+| `docs/schema-inference.md` | Inference rules, uncertainty, and revision-controlled overrides |
 | `docs/delivery-plan.md` | Complete 60-day schedule and daily work packages |
 | `docs/progress.md` | Completed work and next issue |
 | `.github` | CI, issue forms, and PR template |
@@ -162,3 +167,5 @@ quality variants, reproducibility, and development/reserved question separation.
 public held-out manifest is an initial reserved split, not a claim of unseen-task accuracy.
 See [W03 progress](docs/progress/w03.md) for this workday's implementation and evidence.
 W04 was explicitly brought forward to November 13; see [W04 progress](docs/progress/w04.md).
+
+W05 was executed November 16; see [W05 progress](docs/progress/w05.md). Next: W06 deterministic profiling on November 17.

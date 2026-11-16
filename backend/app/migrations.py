@@ -71,6 +71,17 @@ MIGRATIONS = (
             )""",
         ),
     ),
+    Migration(
+        version=3,
+        name="schema_type_overrides",
+        statements=(
+            """CREATE TABLE dataset_schema_overrides (
+                dataset_id TEXT PRIMARY KEY REFERENCES datasets(id) ON DELETE CASCADE,
+                revision INTEGER NOT NULL CHECK(revision > 0),
+                overrides_json TEXT NOT NULL
+            )""",
+        ),
+    ),
 )
 
 

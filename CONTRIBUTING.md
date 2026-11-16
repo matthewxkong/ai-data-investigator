@@ -2,7 +2,7 @@
 
 Work Sunday through Thursday, excluding US federal holidays. Fridays and Saturdays are rest days. The delivery calendar is in [the plan](docs/delivery-plan.md).
 
-Create one issue for a concrete daily outcome, using the acceptance evidence in the plan. Group related outcomes into a focused branch and PR. Day one's foundation was merged in PR #3. Day two continues in `work/w02-api-persistence`, tracking issue #2. Open a new branch from the latest `origin/main` when a planned PR has already been merged.
+Create one issue for a concrete daily outcome, using the acceptance evidence in the plan. Group related outcomes into a focused branch and PR. Open a new branch from the latest `origin/main` when a prerequisite PR has been merged. If it is still open, keep dependent work on its own branch and target the prerequisite branch so reviewers can see the new feature separately; document the dependency and retarget to `main` after the prerequisite merges. Current evidence lives in `docs/progress/`.
 
 Make coherent commits for behavior, verification, or documentation. The plan offers eight candidate work packages per workday; combine related changes or split genuinely separate changes as needed. Use truthful dates and describe what changed. Do not commit `.env` files, raw private datasets, generated artifacts, or credentials.
 
