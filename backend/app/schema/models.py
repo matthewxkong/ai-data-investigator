@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
-SchemaType = Literal["integer", "decimal", "boolean", "date", "categorical", "text"]
+SchemaType = Literal["integer", "decimal", "boolean", "date", "datetime", "categorical", "text"]
 DateOrder = Literal["mdy", "dmy"]
 SafeName = Annotated[str, StringConstraints(pattern=r"^[a-z_][a-z0-9_]{0,62}$")]
 WarningCode = Literal[
@@ -17,6 +17,7 @@ WarningCode = Literal[
     "long_values",
     "low_cardinality",
     "no_type_evidence",
+    "timezone_unspecified",
 ]
 
 
@@ -36,6 +37,7 @@ class TypeEvidence(Contract):
     iso_date_values: int = 0
     mdy_date_values: int = 0
     dmy_date_values: int = 0
+    datetime_values: int = 0
 
 
 class TypeOverride(Contract):

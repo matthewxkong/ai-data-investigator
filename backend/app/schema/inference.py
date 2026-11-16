@@ -29,6 +29,8 @@ class ColumnEvidence:
     mdy: int = 0
     dmy: int = 0
     any_dates: int = 0
+    timestamps: int = 0
+    naive_timestamps: int = 0
     leading_zeros: int = 0
     invalid_dates: int = 0
     nonfinite: int = 0
@@ -57,6 +59,8 @@ class ColumnEvidence:
         self.dmy += dates.dmy
         self.any_dates += dates.iso or dates.mdy or dates.dmy
         self.invalid_dates += dates.invalid
+        self.timestamps += dates.timestamp
+        self.naive_timestamps += dates.naive
 
     def infer(self) -> tuple[SchemaType, DateOrder | None, str, list[SchemaWarning]]:
         warnings: list[SchemaWarning] = []
@@ -81,6 +85,10 @@ class ColumnEvidence:
             )
         if self.long_values:
             warn("long_values", "Values longer than 256 characters are not interpreted as scalars.")
+        if self.naive_timestamps:
+            warn(
+                "timezone_unspecified", "Some timestamps have no timezone; no timezone is assumed."
+            )
         if self.booleans == self.present:
             return "boolean", None, "All non-null values are true/false or yes/no words.", warnings
         if self.decimals == self.present and not self.leading_zeros:
@@ -88,6 +96,8 @@ class ColumnEvidence:
             return kind, None, "Every non-null value matches finite numeric syntax.", warnings
         if self.iso == self.present:
             return "date", None, "Every non-null value is a valid ISO YYYY-MM-DD date.", warnings
+        if self.timestamps == self.present:
+            return "datetime", None, "Every non-null value is a supported ISO timestamp.", warnings
         mdy_complete = self.iso + self.mdy == self.present
         dmy_complete = self.iso + self.dmy == self.present
         if mdy_complete and dmy_complete:
@@ -106,7 +116,7 @@ class ColumnEvidence:
             )
         elif self.any_dates == self.present:
             warn("inconsistent_dates", "No single slash-date order fits every value.")
-        strongest = max(self.decimals, self.booleans, self.any_dates)
+        strongest = max(self.decimals, self.booleans, self.any_dates, self.timestamps)
         if 0 < strongest < self.present:
             warn(
                 "mixed_types",
@@ -144,6 +154,8 @@ class ColumnEvidence:
             return self.decimals == self.present
         if override.type == "boolean":
             return self.override_booleans == self.present
+        if override.type == "datetime":
+            return self.timestamps == self.present
         if override.date_order == "mdy":
             return self.iso + self.mdy == self.present
         if override.date_order == "dmy":
@@ -180,6 +192,7 @@ class ColumnEvidence:
                 iso_date_values=self.iso,
                 mdy_date_values=self.mdy,
                 dmy_date_values=self.dmy,
+                datetime_values=self.timestamps,
             ),
             warnings=tuple(warnings),
             override=override,
