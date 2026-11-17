@@ -67,11 +67,17 @@ class Profiler:
         ).fetchone()
         assert result is not None
         # Very large finite inputs can overflow an aggregate. Never emit JSON NaN/Infinity.
-        values = [float(value) if value is not None and math.isfinite(float(value))
-                  else None for value in result[2:]]
-        return NumericSummary(count=int(result[0]), excluded_count=int(result[1]),
-                              **dict(zip(("minimum", "maximum", "mean", "q25", "median", "q75"),
-                                         values, strict=True)))
+        values = [
+            float(value) if value is not None and math.isfinite(float(value)) else None
+            for value in result[2:]
+        ]
+        return NumericSummary(
+            count=int(result[0]),
+            excluded_count=int(result[1]),
+            **dict(
+                zip(("minimum", "maximum", "mean", "q25", "median", "q75"), values, strict=True)
+            ),
+        )
 
     @staticmethod
     def identifier(name: str) -> str:
@@ -88,12 +94,19 @@ class Profiler:
             )
             schema = self.schema.response(imported, evidence, stored)
             try:
-                with duckdb.connect(str(path), read_only=True, config={
-                    "threads": "1", "memory_limit": "128MB",
-                    "enable_external_access": "false", "lock_configuration": "true",
-                    "autoload_known_extensions": "false", "autoinstall_known_extensions": "false",
-                    "allow_community_extensions": "false",
-                }) as connection:
+                with duckdb.connect(
+                    str(path),
+                    read_only=True,
+                    config={
+                        "threads": "1",
+                        "memory_limit": "128MB",
+                        "enable_external_access": "false",
+                        "lock_configuration": "true",
+                        "autoload_known_extensions": "false",
+                        "autoinstall_known_extensions": "false",
+                        "allow_community_extensions": "false",
+                    },
+                ) as connection:
                     counts = connection.execute(
                         "SELECT (SELECT COUNT(*) FROM data), "
                         "(SELECT COUNT(*) FROM (SELECT DISTINCT * FROM data))"
@@ -107,22 +120,33 @@ class Profiler:
                             f"SELECT COUNT(*) - COUNT({name}), COUNT(DISTINCT {name}) FROM data"
                         ).fetchone()
                         assert count is not None
-                        columns.append(ColumnProfile(
-                            original_name=column.original_name, safe_name=column.safe_name,
-                            effective_type=column.effective_type,
-                            null_count=int(count[0]), distinct_count=int(count[1]),
-                            warnings=tuple(warning.code for warning in column.warnings),
-                        ))
+                        columns.append(
+                            ColumnProfile(
+                                original_name=column.original_name,
+                                safe_name=column.safe_name,
+                                effective_type=column.effective_type,
+                                null_count=int(count[0]),
+                                distinct_count=int(count[1]),
+                                warnings=tuple(warning.code for warning in column.warnings),
+                            )
+                        )
                         if column.effective_type in {"integer", "decimal"}:
                             summary = self.numeric(connection, name)
                             columns[-1].numeric = summary
                             columns[-1].warnings += ("binary_float_summary",)
                             if summary.excluded_count:
                                 columns[-1].warnings += ("numeric_values_excluded",)
-                            if summary.count and any(value is None for value in (
-                                summary.minimum, summary.maximum, summary.mean,
-                                summary.q25, summary.median, summary.q75,
-                            )):
+                            if summary.count and any(
+                                value is None
+                                for value in (
+                                    summary.minimum,
+                                    summary.maximum,
+                                    summary.mean,
+                                    summary.q25,
+                                    summary.median,
+                                    summary.q75,
+                                )
+                            ):
                                 columns[-1].warnings += ("numeric_aggregate_overflow",)
                         if column.effective_type in {"categorical", "boolean"}:
                             frequencies = connection.execute(
@@ -136,10 +160,15 @@ class Profiler:
                             )
                             columns[-1].frequencies_complete = int(count[1]) <= 10
                     return ProfileResponse(
-                        dataset_id=imported.metadata.id, dataset_version=imported.metadata.version,
-                        schema_revision=stored.revision, row_count=rows,
-                        duplicate_row_count=rows - unique_rows, columns=tuple(columns),
+                        dataset_id=imported.metadata.id,
+                        dataset_version=imported.metadata.version,
+                        schema_revision=stored.revision,
+                        row_count=rows,
+                        duplicate_row_count=rows - unique_rows,
+                        columns=tuple(columns),
                         warnings=("duplicate_rows",) if rows != unique_rows else (),
                     )
             except (duckdb.Error, OSError, ValueError):
-                raise ApiError(503, "profile_unavailable", "The dataset cannot be profiled.") from None
+                raise ApiError(
+                    503, "profile_unavailable", "The dataset cannot be profiled."
+                ) from None
