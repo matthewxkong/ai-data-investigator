@@ -55,3 +55,52 @@ class ProfileResponse(BaseModel):
 class Profiler:
     def __init__(self, schema: SchemaService) -> None:
         self.schema = schema
+
+    @staticmethod
+    def identifier(name: str) -> str:
+        if re.fullmatch(r"[a-z_][a-z0-9_]{0,62}", name) is None:
+            raise ValueError("Invalid stored identifier.")
+        return '"' + name + '"'
+
+    def inspect(self, imported: ImportedDataset) -> ProfileResponse:
+        with self.schema.inspector.capacity():
+            path = self.schema.ingestion.artifact_path(imported.metadata) / "data.duckdb"
+            evidence = self.schema.inspector.scan(path, imported)
+            stored = self.schema.repository.get(
+                imported.metadata.id, owner_id=imported.metadata.session_id
+            )
+            schema = self.schema.response(imported, evidence, stored)
+            try:
+                with duckdb.connect(str(path), read_only=True, config={
+                    "threads": "1", "memory_limit": "128MB",
+                    "enable_external_access": "false", "lock_configuration": "true",
+                    "autoload_known_extensions": "false", "autoinstall_known_extensions": "false",
+                    "allow_community_extensions": "false",
+                }) as connection:
+                    counts = connection.execute(
+                        "SELECT (SELECT COUNT(*) FROM data), "
+                        "(SELECT COUNT(*) FROM (SELECT DISTINCT * FROM data))"
+                    ).fetchone()
+                    assert counts is not None
+                    rows, unique_rows = int(counts[0]), int(counts[1])
+                    columns = []
+                    for column in schema.columns:
+                        name = self.identifier(column.safe_name)
+                        count = connection.execute(
+                            f"SELECT COUNT(*) - COUNT({name}), COUNT(DISTINCT {name}) FROM data"
+                        ).fetchone()
+                        assert count is not None
+                        columns.append(ColumnProfile(
+                            original_name=column.original_name, safe_name=column.safe_name,
+                            effective_type=column.effective_type,
+                            null_count=int(count[0]), distinct_count=int(count[1]),
+                            warnings=tuple(warning.code for warning in column.warnings),
+                        ))
+                    return ProfileResponse(
+                        dataset_id=imported.metadata.id, dataset_version=imported.metadata.version,
+                        schema_revision=stored.revision, row_count=rows,
+                        duplicate_row_count=rows - unique_rows, columns=tuple(columns),
+                        warnings=("duplicate_rows",) if rows != unique_rows else (),
+                    )
+            except (duckdb.Error, OSError, ValueError):
+                raise ApiError(503, "profile_unavailable", "The dataset cannot be profiled.") from None
