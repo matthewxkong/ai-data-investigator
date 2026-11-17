@@ -4,6 +4,8 @@ As of W05, executed November 16, 2026. The application remains version 0.0.1 whi
 
 ## Endpoints
 
+W06 (November 17) adds `GET /api/datasets/{id}/profile`, returning typed statistics under the same local/session guards. See [the profiling contract](data-profiling.md). Metadata schema version remains 3.
+
 | Method and path | Success | Failure behavior |
 | --- | --- | --- |
 | `GET /api/health` | 200; process liveness | Independent of metadata availability |
