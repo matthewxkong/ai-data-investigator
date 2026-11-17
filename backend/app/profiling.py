@@ -130,6 +130,8 @@ class Profiler:
                                 warnings=tuple(warning.code for warning in column.warnings),
                             )
                         )
+                        if int(count[0]):
+                            columns[-1].warnings += ("missing_values",)
                         if column.effective_type in {"integer", "decimal"}:
                             summary = self.numeric(connection, name)
                             columns[-1].numeric = summary
