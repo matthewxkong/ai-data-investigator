@@ -16,6 +16,8 @@ The first demonstration will answer: **How did monthly revenue change by region?
 
 ## Current status
 
+W06 adds [deterministic data profiling](docs/data-profiling.md): exact missing/distinct/duplicate counts, numeric summaries, and bounded category frequencies through `GET /api/datasets/<id>/profile`. See [November 17 evidence](docs/progress/w06.md).
+
 W05 adds full-row semantic schema inspection with evidence, uncertainty warnings, and validated, persistent type overrides. W04 supplies local CSV ingestion, immutable source checksums/versions, and server-issued session ownership. The React frontend still reports its API connection; browser upload/schema controls, profiling, charts, and model-backed investigations are later milestones. No API key is required.
 
 ## Run locally

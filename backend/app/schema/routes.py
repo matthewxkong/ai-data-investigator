@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, Response
 from app.errors import ApiError, ErrorResponse
 from app.ingestion.models import ImportedDataset
 from app.ingestion.routes import upload_services
+from app.profiling import Profiler, ProfileResponse
 from app.schema.models import OverrideRequest, SchemaResponse
 from app.services import Services
 from app.sessions import SESSION_COOKIE
@@ -14,6 +15,15 @@ router = APIRouter(
     tags=["schema"],
     responses={code: {"model": ErrorResponse} for code in (401, 403, 404, 409, 422, 429, 503)},
 )
+
+
+@router.get("/{dataset_id}/profile", response_model=ProfileResponse)
+def get_profile(dataset_id: UUID, request: Request, response: Response) -> ProfileResponse:
+    """Compute a local owned profile using fixed read-only queries."""
+    services, imported = owned_dataset(dataset_id, request)
+    result = Profiler(services.schema).inspect(imported)
+    response.headers["Cache-Control"] = "no-store"
+    return result
 
 
 def owned_dataset(dataset_id: UUID, request: Request) -> tuple[Services, ImportedDataset]:

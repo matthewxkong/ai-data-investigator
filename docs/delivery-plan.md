@@ -238,20 +238,22 @@ Originally scheduled November 15; that slot is now review/buffer. Implementation
 
 ### W06 / D09 - Tuesday, November 17, 2026
 
+Implemented November 17 on a separate branch dependent on W05 PR #10; tracking issue #11. Owner merge remains pending. See [W06 evidence](progress/w06.md).
+
 **Issue W06: Build deterministic data profiling.** Paired PR: P03.
 
 **Done when:** A profile exposes row counts, missing values, distributions, and data-quality warnings computed by the database.
 
 **Candidate commits:**
 
-- [ ] Compute row and distinct-value counts.
-- [ ] Compute per-column missingness.
-- [ ] Compute numeric range quantiles and mean.
-- [ ] Compute bounded categorical frequencies.
-- [ ] Detect exact duplicate rows.
-- [ ] Return structured profile and quality warnings.
-- [ ] Check profiles against reference calculations.
-- [ ] Document profiling behavior and merge P03.
+- [x] Compute row and distinct-value counts.
+- [x] Compute per-column missingness.
+- [x] Compute numeric range quantiles and mean.
+- [x] Compute bounded categorical frequencies.
+- [x] Detect exact duplicate rows.
+- [x] Return structured profile and quality warnings.
+- [x] Check profiles against reference calculations.
+- [x] Document profiling behavior and prepare the W06 PR for owner review.
 
 ### W07 / D10 - Wednesday, November 18, 2026
 
