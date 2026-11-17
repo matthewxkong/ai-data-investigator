@@ -124,6 +124,17 @@ class Profiler:
                                 summary.q25, summary.median, summary.q75,
                             )):
                                 columns[-1].warnings += ("numeric_aggregate_overflow",)
+                        if column.effective_type in {"categorical", "boolean"}:
+                            frequencies = connection.execute(
+                                f"SELECT LEFT({name}, 256), COUNT(*), LENGTH({name}) > 256 "
+                                f"FROM data WHERE {name} IS NOT NULL GROUP BY {name} "
+                                f"ORDER BY COUNT(*) DESC, {name} ASC LIMIT 10"
+                            ).fetchall()
+                            columns[-1].frequencies = tuple(
+                                Frequency(value=value, count=count, truncated=truncated)
+                                for value, count, truncated in frequencies
+                            )
+                            columns[-1].frequencies_complete = int(count[1]) <= 10
                     return ProfileResponse(
                         dataset_id=imported.metadata.id, dataset_version=imported.metadata.version,
                         schema_revision=stored.revision, row_count=rows,
