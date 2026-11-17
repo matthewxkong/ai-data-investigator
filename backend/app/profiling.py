@@ -57,6 +57,23 @@ class Profiler:
         self.schema = schema
 
     @staticmethod
+    def numeric(connection: duckdb.DuckDBPyConnection, name: str) -> NumericSummary:
+        result = connection.execute(
+            f"WITH parsed AS (SELECT TRY_CAST({name} AS DOUBLE) AS n FROM data "
+            f"WHERE {name} IS NOT NULL), valid AS (SELECT n FROM parsed WHERE isfinite(n)) "
+            "SELECT COUNT(*), (SELECT COUNT(*) FROM parsed) - COUNT(*), "
+            "MIN(n), MAX(n), AVG(n), quantile_cont(n, 0.25), "
+            "quantile_cont(n, 0.5), quantile_cont(n, 0.75) FROM valid"
+        ).fetchone()
+        assert result is not None
+        # Very large finite inputs can overflow an aggregate. Never emit JSON NaN/Infinity.
+        values = [float(value) if value is not None and math.isfinite(float(value))
+                  else None for value in result[2:]]
+        return NumericSummary(count=int(result[0]), excluded_count=int(result[1]),
+                              **dict(zip(("minimum", "maximum", "mean", "q25", "median", "q75"),
+                                         values, strict=True)))
+
+    @staticmethod
     def identifier(name: str) -> str:
         if re.fullmatch(r"[a-z_][a-z0-9_]{0,62}", name) is None:
             raise ValueError("Invalid stored identifier.")
@@ -96,6 +113,17 @@ class Profiler:
                             null_count=int(count[0]), distinct_count=int(count[1]),
                             warnings=tuple(warning.code for warning in column.warnings),
                         ))
+                        if column.effective_type in {"integer", "decimal"}:
+                            summary = self.numeric(connection, name)
+                            columns[-1].numeric = summary
+                            columns[-1].warnings += ("binary_float_summary",)
+                            if summary.excluded_count:
+                                columns[-1].warnings += ("numeric_values_excluded",)
+                            if summary.count and any(value is None for value in (
+                                summary.minimum, summary.maximum, summary.mean,
+                                summary.q25, summary.median, summary.q75,
+                            )):
+                                columns[-1].warnings += ("numeric_aggregate_overflow",)
                     return ProfileResponse(
                         dataset_id=imported.metadata.id, dataset_version=imported.metadata.version,
                         schema_revision=stored.revision, row_count=rows,
