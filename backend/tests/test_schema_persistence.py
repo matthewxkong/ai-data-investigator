@@ -61,7 +61,7 @@ def test_version_two_upgrade_preserves_import_sessions_and_history(
     with database.connection() as connection:
         after = [tuple(row) for row in connection.execute("SELECT * FROM schema_migrations")]
     assert after[:2] == before
-    assert len(after) == 3 and database.is_ready()
+    assert len(after) == len(migrations.MIGRATIONS) and database.is_ready()
     assert SessionStore(database).resolve(grant.token) is not None
     assert (
         DatasetRepository(database).get_import(imported.metadata.id, session_id=grant.owner_id)
