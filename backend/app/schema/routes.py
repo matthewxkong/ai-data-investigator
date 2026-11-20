@@ -4,11 +4,10 @@ from fastapi import APIRouter, Request, Response
 
 from app.errors import ApiError, ErrorResponse
 from app.ingestion.models import ImportedDataset
-from app.ingestion.routes import upload_services
+from app.ingestion.routes import resolve_owner
 from app.profiling import Profiler, ProfileResponse
 from app.schema.models import OverrideRequest, SchemaResponse
 from app.services import Services
-from app.sessions import SESSION_COOKIE
 
 router = APIRouter(
     prefix="/api/datasets",
@@ -27,10 +26,7 @@ def get_profile(dataset_id: UUID, request: Request, response: Response) -> Profi
 
 
 def owned_dataset(dataset_id: UUID, request: Request) -> tuple[Services, ImportedDataset]:
-    services = upload_services(request)
-    session = services.sessions.resolve(request.cookies.get(SESSION_COOKIE))
-    if session is None:
-        raise ApiError(401, "session_required", "A valid upload session cookie is required.")
+    services, session = resolve_owner(request)
     imported = services.datasets.get_import(dataset_id, session_id=session.owner_id)
     if imported is None:
         raise ApiError(404, "not_found", "Dataset not found.")
