@@ -261,16 +261,18 @@ Implemented November 17 on a separate branch dependent on W05 PR #10; tracking i
 
 **Done when:** Dataset metadata, preview, profiling, and deletion work together without exposing another session's data.
 
+**Implementation:** See the [W07 progress record](progress/w07.md).
+
 **Candidate commits:**
 
-- [ ] Create opaque local-session identifiers.
-- [ ] Scope dataset lookup to session ownership.
-- [ ] Add paginated bounded preview endpoint.
-- [ ] Add dataset list and metadata endpoints.
-- [ ] Add explicit dataset deletion endpoint.
-- [ ] Delete associated artifacts and cached metadata.
-- [ ] Check cross-session access and cleanup.
-- [ ] Document retention policy and deletion semantics.
+- [x] Reuse opaque local-session identifiers from W04.
+- [x] Scope dataset lookup to session ownership.
+- [x] Add paginated bounded preview endpoint.
+- [x] Add dataset list and metadata endpoints.
+- [x] Add explicit dataset deletion endpoint.
+- [x] Delete associated artifacts and dependent metadata.
+- [x] Check cross-session access and cleanup.
+- [x] Document retention policy and deletion semantics.
 
 ### W08 / D11 - Thursday, November 19, 2026
 
