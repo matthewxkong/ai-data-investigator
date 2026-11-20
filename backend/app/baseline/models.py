@@ -1,9 +1,9 @@
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 
-ResultValue = StrictInt | StrictFloat | StrictStr | None
+ResultValue = StrictBool | StrictInt | StrictFloat | StrictStr | None
 FixtureName = Literal["sales", "tickets", "inventory"]
 MAX_RESULT_ROWS = 1_000
 
@@ -22,6 +22,7 @@ class QueryResult(Contract):
     rows: list[list[ResultValue]]
     row_limit: int = Field(ge=1, le=MAX_RESULT_ROWS)
     truncated: bool
+    output_complete: bool
 
 
 class QueryEvidence(Contract):
@@ -33,8 +34,8 @@ class QueryEvidence(Contract):
 
 
 class Tolerance(Contract):
-    absolute: Decimal = Field(default=Decimal(0), ge=0, allow_inf_nan=False)
-    relative: Decimal = Field(default=Decimal(0), ge=0, allow_inf_nan=False)
+    absolute: Decimal = Field(default=Decimal(0), ge=0, le=Decimal("1e1000"), allow_inf_nan=False)
+    relative: Decimal = Field(default=Decimal(0), ge=0, le=1, allow_inf_nan=False)
 
 
 class CaseResult(Contract):
