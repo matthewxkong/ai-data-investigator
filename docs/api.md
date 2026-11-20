@@ -1,19 +1,23 @@
 # Implemented API: local ingestion and metadata
 
-As of W05, executed November 16, 2026. The application remains version 0.0.1 while its foundation is built.
+As of W07, executed November 18, 2026. The application remains version 0.0.1 while its foundation is built.
 
 ## Endpoints
 
-W06 (November 17) adds `GET /api/datasets/{id}/profile`, returning typed statistics under the same local/session guards. See [the profiling contract](data-profiling.md). Metadata schema version remains 3.
+See [the dataset lifecycle contract](dataset-lifecycle.md) for pagination, preview limits, and deletion retries.
 
 | Method and path | Success | Failure behavior |
 | --- | --- | --- |
 | `GET /api/health` | 200; process liveness | Independent of metadata availability |
 | `GET /api/ready` | 200; metadata store reachable with the complete supported schema | 503 if startup is incomplete, storage is missing/locked, or the schema is incompatible |
 | `POST /api/datasets` | 201; streamed local CSV import and owned session cookie | See [ingestion contract](csv-ingestion.md) for protocol and limit errors |
+| `GET /api/datasets` | 200; page of imported dataset summaries for this session | 401 for an invalid/missing session; 422 for invalid pagination |
 | `GET /api/datasets/{id}` | 200; uploaded metadata for the session owner | 401 for an invalid/missing session; 404 for absent/other-session records |
+| `GET /api/datasets/{id}/preview` | 200; bounded page of imported rows | Session/local guards; 429 busy; 503 unavailable artifact |
+| `DELETE /api/datasets/{id}` | 204; owned dataset and associated files removed | Session/local guards; 503 `delete_pending` if physical cleanup needs a retry |
 | `GET /api/datasets/{id}/schema` | 200; complete semantic schema, evidence, warnings, and effective overrides | Session/local guards; 429 busy; 503 unavailable artifact |
 | `PUT /api/datasets/{id}/schema/overrides` | 200; replace/reset validated semantic overrides and increment revision | Also 409 stale revision; 422 invalid/unknown/incompatible override |
+| `GET /api/datasets/{id}/profile` | 200; typed [data profile](data-profiling.md) | Session/local guards; 429 busy; 503 unavailable artifact |
 | `GET /docs` | Interactive API documentation | Standard HTTP errors |
 | `GET /openapi.json` | Machine-readable endpoint and error schemas | Standard HTTP errors |
 
@@ -26,7 +30,7 @@ Health response, unchanged from day one:
 Readiness response:
 
 ```json
-{"status":"ready","metadata_schema_version":3}
+{"status":"ready","metadata_schema_version":4}
 ```
 
 Readiness checks metadata only. A successful response does not validate the CSV worker or imply a model/analytical query worker is ready. Probes read existing storage without creating replacement files. The configured SQLite timeout bounds waiting for locks. Readiness can recover after storage becomes available again; restarting with corrupt, incomplete, or incompatible storage instead fails startup.
@@ -71,9 +75,11 @@ Constructing the app loads configuration and creates per-app service objects; it
 
 Repositories use parameter-bound SQL and close every connection after the operation. Reads and status updates require a session. Cross-session and absent records are indistinguishable to callers. Status values are `queued`, `running`, `completed`, `failed`, and `cancelled`; this persistence API does not yet dispatch work or enforce an agent transition graph.
 
-Migration 2 adds hashed upload sessions and immutable import metadata (source checksum, delimiter, and column mappings). Version-1 records and migration checksums are preserved during upgrade. The upload API exposes only creation and owned metadata lookup. Listing, previews, deletion, account authentication, and investigation execution are future milestones. No endpoint accepts a caller-chosen session owner ID or SQL statement.
+Migration 2 adds hashed upload sessions and immutable import metadata (source checksum, delimiter, and column mappings). Version-1 records and migration checksums are preserved during upgrade. No dataset endpoint accepts a caller-chosen session owner ID or SQL statement.
 
 Migration 3 adds revisioned schema overrides. Existing migration history, dataset versions, and upload sessions are preserved. Schema GET examines every row without storing a sample or changing data. PUT replaces the entire override map using `expected_revision`; an empty map resets overrides while incrementing the revision. Overrides are semantic metadata; physical columns remain VARCHAR. See [the schema contract](schema-inference.md) for types, validation, ambiguity rules, and resource boundaries.
+
+Migration 4 adds `dataset_deletions`, a queue that retains only IDs and ownership for pending file cleanup. Deletion removes import records, override metadata, and investigation records through SQLite foreign keys. The queue entry is removed once file cleanup succeeds.
 
 ## Verification
 

@@ -16,9 +16,9 @@ The first demonstration will answer: **How did monthly revenue change by region?
 
 ## Current status
 
-W06 adds [deterministic data profiling](docs/data-profiling.md): exact missing/distinct/duplicate counts, numeric summaries, and bounded category frequencies through `GET /api/datasets/<id>/profile`. See [November 17 evidence](docs/progress/w06.md).
+W07 adds [dataset listing, paginated previews, and deletion](docs/dataset-lifecycle.md). W06 adds [deterministic data profiling](docs/data-profiling.md): exact missing/distinct/duplicate counts, numeric summaries, and bounded category frequencies through `GET /api/datasets/<id>/profile`.
 
-W05 adds full-row semantic schema inspection with evidence, uncertainty warnings, and validated, persistent type overrides. W04 supplies local CSV ingestion, immutable source checksums/versions, and server-issued session ownership. The React frontend still reports its API connection; browser upload/schema controls, profiling, charts, and model-backed investigations are later milestones. No API key is required.
+W05 adds full-row semantic schema inspection with evidence, uncertainty warnings, and validated, persistent type overrides. W04 supplies local CSV ingestion, immutable source checksums/versions, and server-issued session ownership. The React frontend reports its API connection; dataset controls, charts, and model-backed investigations are later frontend milestones. No API key is required for the current backend.
 
 ## Run locally
 
@@ -44,7 +44,7 @@ npm run dev
 
 Open <http://127.0.0.1:5173>. The page should report **API connected**. The API health endpoint is <http://127.0.0.1:8000/api/health> and interactive API documentation is at <http://127.0.0.1:8000/docs>.
 
-Metadata storage is initialized on application startup. Readiness at <http://127.0.0.1:8000/api/ready> should return `{"status":"ready","metadata_schema_version":3}`. Liveness reports that the process responds; readiness checks only the metadata foundation, not a model provider or analytical worker.
+Metadata storage is initialized on application startup. Readiness at <http://127.0.0.1:8000/api/ready> should return `{"status":"ready","metadata_schema_version":4}`. Liveness reports that the process responds; readiness checks only the metadata foundation, not a model provider or analytical worker.
 
 ## Upload a local CSV
 
@@ -60,7 +60,7 @@ Uploads accept UTF-8 with optional BOM, comma/semicolon/tab delimiters, standard
 
 Initial caps: **25,000,000 bytes, 100,000 data rows, 256 columns**, 256 characters per header, 131,072 per field, and 1,048,576 per physical line. Two imports can run concurrently per API process. The fixed-operation DuckDB child has a 256 MB database-memory budget and 45-second import timeout. Invalid inputs leave no published artifacts or metadata. See [the upload contract](docs/csv-ingestion.md) for exact behavior and recovery limits.
 
-Uploads are for local development/test use and are disabled in production mode. Published artifacts are stored locally under the configured data directory; no model call is made. Dataset listing, preview, deletion, and user-account authentication remain later milestones.
+Uploads are for local development/test use and are disabled in production mode. Published artifacts are stored locally under the configured data directory; no model call is made. Reuse the upload session cookie to list imports with `GET /api/datasets`, preview rows with `GET /api/datasets/<id>/preview`, or remove an import with `DELETE /api/datasets/<id>`. See the [retention and deletion contract](docs/dataset-lifecycle.md).
 
 ## Inspect a dataset schema
 
@@ -170,4 +170,7 @@ public held-out manifest is an initial reserved split, not a claim of unseen-tas
 See [W03 progress](docs/progress/w03.md) for this workday's implementation and evidence.
 W04 was explicitly brought forward to November 13; see [W04 progress](docs/progress/w04.md).
 
-W05 was executed November 16; see [W05 progress](docs/progress/w05.md). Next: W06 deterministic profiling on November 17.
+W08 runs all ten development queries against actual imported DuckDB artifacts. From
+`backend`, run `uv run --locked python -m app.baseline --check` to reproduce the
+[checked-in report](evaluation/development/baseline.json). See the
+[baseline contract](docs/trusted-sql-baseline.md) and [W08 progress](docs/progress/w08.md).

@@ -1,6 +1,4 @@
-> Current: [W06 profiling, November 17](progress/w06.md). W07 lifecycle is scheduled November 18. Dependency PRs await owner merge.
-
-> Current milestone: [W05 schema inference, November 16](progress/w05.md). W04 PR #8 and the dependent W05 PR await owner review. W06 profiling remains November 17. The sections below retain milestone-specific historical evidence.
+> Current: [W08 trusted SQL baseline](progress/w08.md), completed November 20 as catch-up for November 19. [W07 dataset lifecycle](progress/w07.md) and W08 are reviewed together. W09 query-worker isolation remains scheduled for November 22.
 
 # Delivery progress
 

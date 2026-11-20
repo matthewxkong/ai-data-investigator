@@ -82,6 +82,17 @@ MIGRATIONS = (
             )""",
         ),
     ),
+    Migration(
+        version=4,
+        name="pending_dataset_deletions",
+        statements=(
+            """CREATE TABLE dataset_deletions (
+                dataset_id TEXT PRIMARY KEY,
+                dataset_version TEXT NOT NULL,
+                session_id TEXT NOT NULL
+            )""",
+        ),
+    ),
 )
 
 

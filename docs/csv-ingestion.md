@@ -1,6 +1,6 @@
 # Local CSV ingestion
 
-W04 adds backend ingestion and metadata lookup. W05 now provides [semantic schema inference](schema-inference.md) over the imported text. Upload controls, preview, deletion, profiling, and generated SQL remain later work. No model or API key is involved.
+W04 adds backend ingestion and metadata lookup. The backend now provides [semantic schema inference](schema-inference.md), [profiling](data-profiling.md), and [listing, previews, and deletion](dataset-lifecycle.md). No model or API key is involved.
 
 ## Upload and retrieve metadata
 
@@ -55,7 +55,7 @@ This process is not an operating-system sandbox, and DuckDB's allocator setting 
 
 Each successful upload receives fresh UUID dataset/version identifiers, even for identical bytes. Equal source bytes have equal SHA-256 checksums. Published directories under the configured data root contain `source.csv` and `data.duckdb`; names come from server UUIDs. Canonical CSV, import specification, and spill files are removed before publication. SQLite migration 2 adds session/import records without rewriting migration 1 or removing existing metadata. Session, dataset, and import metadata are registered in one transaction.
 
-Validation failures, byte/row limits, timeouts, ordinary worker failures, and ordinary metadata-commit failures remove this upload's temporary or published artifacts. Cleanup validates containment and operates only on owned directories. Filesystem publication and SQLite commit are separate operations: abrupt host/process termination can leave private unreferenced directories. Automatic crash reconciliation, retention, and dataset deletion are not implemented. Preserve backups and inspect such artifacts during maintenance with the application stopped; do not assume session expiry removes them.
+Validation failures, byte/row limits, timeouts, ordinary worker failures, and ordinary metadata-commit failures remove this upload's temporary or published artifacts. Cleanup validates containment and operates only on owned directories. Filesystem publication and SQLite commit are separate operations: abrupt host/process termination can leave private unreferenced directories. A [deletion request](dataset-lifecycle.md) removes a registered upload, with recovery for interrupted deletion; it does not reconcile unpublished directories. Inspect any such directories during maintenance with the application stopped.
 
 ## Error handling and verification
 

@@ -5,11 +5,16 @@ from uuid import UUID
 from fastapi import APIRouter, Header, Query, Request, Response
 
 from app.errors import ApiError, ErrorResponse
-from app.ingestion.models import DatasetResponse, Delimiter
+from app.ingestion.models import DatasetList, DatasetPreview, DatasetResponse, Delimiter
+from app.ingestion.preview import MAX_PREVIEW_LIMIT, preview_rows
+from app.schema.inspection import MAX_ROWS
 from app.services import Services
-from app.sessions import SESSION_COOKIE
+from app.sessions import SESSION_COOKIE, SessionGrant
 
 router = APIRouter(prefix="/api/datasets", tags=["datasets"])
+SESSION_ERRORS: dict[int | str, dict[str, object]] = {
+    code: {"model": ErrorResponse} for code in (401, 403)
+}
 
 
 def upload_services(request: Request) -> Services:
@@ -28,6 +33,14 @@ def upload_services(request: Request) -> Services:
             403, "origin_not_allowed", "This browser origin cannot access local datasets."
         )
     return services
+
+
+def resolve_owner(request: Request) -> tuple[Services, SessionGrant]:
+    services = upload_services(request)
+    session = services.sessions.resolve(request.cookies.get(SESSION_COOKIE))
+    if session is None:
+        raise ApiError(401, "session_required", "A valid upload session cookie is required.")
+    return services, session
 
 
 @router.post(
@@ -84,15 +97,63 @@ async def upload_csv(
     return imported.response()
 
 
-@router.get("/{dataset_id}", response_model=DatasetResponse)
+@router.get("", response_model=DatasetList, responses=SESSION_ERRORS)
+def list_uploaded_datasets(
+    request: Request,
+    response: Response,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    offset: Annotated[int, Query(ge=0, le=2**63 - 1)] = 0,
+) -> DatasetList:
+    """List only this session's imported datasets, newest first."""
+    services, session = resolve_owner(request)
+    result = services.datasets.list_imports(session.owner_id, offset=offset, limit=limit)
+    response.headers["Cache-Control"] = "no-store"
+    return result
+
+
+@router.get("/{dataset_id}", response_model=DatasetResponse, responses=SESSION_ERRORS)
 def get_uploaded_dataset(dataset_id: UUID, request: Request, response: Response) -> DatasetResponse:
     """Inspect an uploaded dataset's metadata using its server-issued session cookie."""
-    services = upload_services(request)
-    session = services.sessions.resolve(request.cookies.get(SESSION_COOKIE))
-    if session is None:
-        raise ApiError(401, "session_required", "A valid upload session cookie is required.")
+    services, session = resolve_owner(request)
     imported = services.datasets.get_import(dataset_id, session_id=session.owner_id)
     if imported is None:
         raise ApiError(404, "not_found", "Dataset not found.")
     response.headers["Cache-Control"] = "no-store"
     return imported.response()
+
+
+@router.get(
+    "/{dataset_id}/preview",
+    response_model=DatasetPreview,
+    responses={**SESSION_ERRORS, 429: {"model": ErrorResponse}},
+)
+def get_dataset_preview(
+    dataset_id: UUID,
+    request: Request,
+    response: Response,
+    limit: Annotated[int, Query(ge=1, le=MAX_PREVIEW_LIMIT)] = 20,
+    offset: Annotated[int, Query(ge=0, le=MAX_ROWS)] = 0,
+) -> DatasetPreview:
+    """Read one bounded page of source rows in import order."""
+    services, session = resolve_owner(request)
+    imported = services.datasets.get_import(dataset_id, session_id=session.owner_id)
+    if imported is None:
+        raise ApiError(404, "not_found", "Dataset not found.")
+    with services.schema.inspector.capacity():
+        try:
+            database = services.ingestion.artifact_path(imported.metadata) / "data.duckdb"
+        except OSError:
+            raise ApiError(
+                503, "dataset_unavailable", "The dataset artifact is unavailable."
+            ) from None
+        result = preview_rows(database, imported, offset=offset, limit=limit)
+    response.headers["Cache-Control"] = "no-store"
+    return result
+
+
+@router.delete("/{dataset_id}", status_code=204, response_class=Response, responses=SESSION_ERRORS)
+def delete_uploaded_dataset(dataset_id: UUID, request: Request) -> Response:
+    """Delete an owned import, its dependent metadata, and its files."""
+    services, session = resolve_owner(request)
+    services.deletion.delete(dataset_id, session_id=session.owner_id)
+    return Response(status_code=204, headers={"Cache-Control": "no-store"})

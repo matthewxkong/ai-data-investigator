@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from app.config import Settings
 from app.database import Database
+from app.ingestion.deletion import DatasetDeletion
 from app.ingestion.service import IngestionService
 from app.repositories.datasets import DatasetRepository
 from app.repositories.investigations import InvestigationRepository
@@ -20,6 +21,7 @@ class Services:
     investigations: InvestigationRepository
     sessions: SessionStore
     ingestion: IngestionService
+    deletion: DatasetDeletion
     schema: SchemaService
 
 
@@ -35,5 +37,6 @@ def create_services(settings: Settings) -> Services:
         investigations=InvestigationRepository(database),
         sessions=sessions,
         ingestion=ingestion,
+        deletion=DatasetDeletion(settings.data_dir, datasets),
         schema=SchemaService(ingestion, SchemaRepository(database)),
     )

@@ -261,16 +261,18 @@ Implemented November 17 on a separate branch dependent on W05 PR #10; tracking i
 
 **Done when:** Dataset metadata, preview, profiling, and deletion work together without exposing another session's data.
 
+**Implementation:** See the [W07 progress record](progress/w07.md).
+
 **Candidate commits:**
 
-- [ ] Create opaque local-session identifiers.
-- [ ] Scope dataset lookup to session ownership.
-- [ ] Add paginated bounded preview endpoint.
-- [ ] Add dataset list and metadata endpoints.
-- [ ] Add explicit dataset deletion endpoint.
-- [ ] Delete associated artifacts and cached metadata.
-- [ ] Check cross-session access and cleanup.
-- [ ] Document retention policy and deletion semantics.
+- [x] Reuse opaque local-session identifiers from W04.
+- [x] Scope dataset lookup to session ownership.
+- [x] Add paginated bounded preview endpoint.
+- [x] Add dataset list and metadata endpoints.
+- [x] Add explicit dataset deletion endpoint.
+- [x] Delete associated artifacts and dependent metadata.
+- [x] Check cross-session access and cleanup.
+- [x] Document retention policy and deletion semantics.
 
 ### W08 / D11 - Thursday, November 19, 2026
 
@@ -278,16 +280,19 @@ Implemented November 17 on a separate branch dependent on W05 PR #10; tracking i
 
 **Done when:** Known developer-authored SQL reproduces fixture answers; the benchmark runner records exact expected results.
 
+**Implementation:** See the [W08 progress record](progress/w08.md). P04 awaits owner review.
+
 **Candidate commits:**
 
-- [ ] Create query result and evidence schemas.
-- [ ] Execute fixed reference queries against imported data.
-- [ ] Normalize numeric null and date results.
-- [ ] Record SQL result hash and dataset version.
-- [ ] Add row truncation and aggregate completeness markers.
-- [ ] Implement configurable numeric tolerances.
-- [ ] Run ten development reference cases.
-- [ ] Save deterministic baseline report and merge P04.
+- [x] Create query result and evidence schemas.
+- [x] Execute fixed reference queries against imported data.
+- [x] Normalize numeric, null, and date results.
+- [x] Record SQL, result, and dataset version hashes.
+- [x] Mark truncated or complete query output.
+- [x] Implement configurable numeric tolerances.
+- [x] Run ten development reference cases.
+- [x] Save the deterministic baseline report.
+- [ ] Merge P04 after owner review.
 
 ### W09 / D14 - Sunday, November 22, 2026
 

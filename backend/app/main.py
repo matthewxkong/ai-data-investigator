@@ -31,6 +31,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         services.database.initialize()
+        services.deletion.retry_pending()
         application.state.started = True
         try:
             yield
