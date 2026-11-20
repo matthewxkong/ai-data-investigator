@@ -1,0 +1,585 @@
+{
+  "schema_version": 1,
+  "suite": "development",
+  "fixture_seed": 20261112,
+  "fixture_generator_version": 1,
+  "duckdb_version": "2.0.0",
+  "tolerance": {
+    "absolute": "0",
+    "relative": "0"
+  },
+  "cases": [
+    {
+      "case_id": "dev_sales_count",
+      "question": "How many sales orders are in this dataset?",
+      "evidence": {
+        "dataset": "sales",
+        "dataset_version": "fixture-v1:e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "source_sha256": "e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "sql_sha256": "ea3c28b91a488f9e838c8653f2de591abc93f92baf98cd00c87a9c9dd95935d2",
+        "result_sha256": "3f46a8feaccfa4a48a5b1514c150a6bbddee3b47650f73bb019b72018b551a72"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "order_count",
+            "sql_type": "BIGINT"
+          }
+        ],
+        "rows": [
+          [
+            120
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "order_count"
+      ],
+      "expected_rows": [
+        [
+          120
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_sales_revenue",
+      "question": "What is total revenue in USD, defined as quantity times unit_price?",
+      "evidence": {
+        "dataset": "sales",
+        "dataset_version": "fixture-v1:e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "source_sha256": "e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "sql_sha256": "8da2f55dd9ca1c4c9589b660cf3ea0fb8beb017fa0dd5ee45876bd360e64c6ec",
+        "result_sha256": "75e11453b26e19cf4162e709f0d0b538ed296c90557ea0e873da50e59e011556"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "revenue_usd",
+            "sql_type": "DECIMAL(38,2)"
+          }
+        ],
+        "rows": [
+          [
+            "44277.24"
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "revenue_usd"
+      ],
+      "expected_rows": [
+        [
+          "44277.24"
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_sales_regions",
+      "question": "What is revenue in USD for each region, ordered by region?",
+      "evidence": {
+        "dataset": "sales",
+        "dataset_version": "fixture-v1:e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "source_sha256": "e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "sql_sha256": "082475b2aea5ec03e75b905c6b0a1f6a4005fcebb058d31bec44cb3b07eac372",
+        "result_sha256": "16ac0669f50228b7778947d093ec313a5d9036cc546fdc0173092006245d5e5b"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "region",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "revenue_usd",
+            "sql_type": "DECIMAL(38,2)"
+          }
+        ],
+        "rows": [
+          [
+            "East",
+            "10319.02"
+          ],
+          [
+            "North",
+            "15654.20"
+          ],
+          [
+            "South",
+            "8417.04"
+          ],
+          [
+            "West",
+            "9886.98"
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "region",
+        "revenue_usd"
+      ],
+      "expected_rows": [
+        [
+          "East",
+          "10319.02"
+        ],
+        [
+          "North",
+          "15654.20"
+        ],
+        [
+          "South",
+          "8417.04"
+        ],
+        [
+          "West",
+          "9886.98"
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_sales_months",
+      "question": "How much revenue in USD was earned in each calendar month, ordered chronologically?",
+      "evidence": {
+        "dataset": "sales",
+        "dataset_version": "fixture-v1:e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "source_sha256": "e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "sql_sha256": "2334950955a726b81c60bc2fafee464a4aaa17ab6dc9f906d0218fdf3595fb60",
+        "result_sha256": "3592a53f8176604d62cc758dc169842f08db0e872f7d5f4dfacff26c4b8dab9d"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "month",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "revenue_usd",
+            "sql_type": "DECIMAL(38,2)"
+          }
+        ],
+        "rows": [
+          [
+            "2026-01",
+            "8022.94"
+          ],
+          [
+            "2026-02",
+            "6757.97"
+          ],
+          [
+            "2026-03",
+            "5750.61"
+          ],
+          [
+            "2026-04",
+            "10051.95"
+          ],
+          [
+            "2026-05",
+            "7386.87"
+          ],
+          [
+            "2026-06",
+            "6306.90"
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "month",
+        "revenue_usd"
+      ],
+      "expected_rows": [
+        [
+          "2026-01",
+          "8022.94"
+        ],
+        [
+          "2026-02",
+          "6757.97"
+        ],
+        [
+          "2026-03",
+          "5750.61"
+        ],
+        [
+          "2026-04",
+          "10051.95"
+        ],
+        [
+          "2026-05",
+          "7386.87"
+        ],
+        [
+          "2026-06",
+          "6306.90"
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_sales_products",
+      "question": "Which three products sold the most units? Break ties by product name ascending.",
+      "evidence": {
+        "dataset": "sales",
+        "dataset_version": "fixture-v1:e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "source_sha256": "e4beb10ca4c8156a661804aa9bf6eac588a0fc7e51e3248a0ff3cff5f8b1c0fb",
+        "sql_sha256": "ca4bc6871c17ccb0925ecc21f5ec2967b7eee7e9bb850b1ebdddba71cbf28ec8",
+        "result_sha256": "b9855ad29a0dcffac83a90fb9e07648378077efad7e6a58976b92a243954434d"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "product",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "units_sold",
+            "sql_type": "HUGEINT"
+          }
+        ],
+        "rows": [
+          [
+            "Monitor",
+            141
+          ],
+          [
+            "Notebook, A5",
+            126
+          ],
+          [
+            "Mouse",
+            96
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "product",
+        "units_sold"
+      ],
+      "expected_rows": [
+        [
+          "Monitor",
+          141
+        ],
+        [
+          "Notebook, A5",
+          126
+        ],
+        [
+          "Mouse",
+          96
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_ticket_priorities",
+      "question": "How many tickets are in each priority, ordered by priority label?",
+      "evidence": {
+        "dataset": "tickets",
+        "dataset_version": "fixture-v1:f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+        "source_sha256": "f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+        "sql_sha256": "c4d8dc13d244513afb795076e98b94e97ca37fbbdbbbaaa841d6563e39390d5b",
+        "result_sha256": "af8d0611b2b7e867778338f1fb87b0fff8a9c37d2dbbcd207b26b5888b1b74e3"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "priority",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "ticket_count",
+            "sql_type": "BIGINT"
+          }
+        ],
+        "rows": [
+          [
+            "high",
+            28
+          ],
+          [
+            "low",
+            28
+          ],
+          [
+            "normal",
+            24
+          ],
+          [
+            "urgent",
+            16
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "priority",
+        "ticket_count"
+      ],
+      "expected_rows": [
+        [
+          "high",
+          28
+        ],
+        [
+          "low",
+          28
+        ],
+        [
+          "normal",
+          24
+        ],
+        [
+          "urgent",
+          16
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_ticket_unresolved",
+      "question": "How many tickets are unresolved, meaning their status is not resolved?",
+      "evidence": {
+        "dataset": "tickets",
+        "dataset_version": "fixture-v1:f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+        "source_sha256": "f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+        "sql_sha256": "549f178d77c4d82b2f3c72b1287d52fefe06c346e364f6026c0aa9eb5ab3e7f9",
+        "result_sha256": "935a8ff5e63fe0627a8ef0d31ccf9b7a130426294515ed980b0038a628d11908"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "unresolved_count",
+            "sql_type": "BIGINT"
+          }
+        ],
+        "rows": [
+          [
+            48
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "unresolved_count"
+      ],
+      "expected_rows": [
+        [
+          48
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_ticket_resolution_hours",
+      "question": "For resolved tickets only, what is the total resolution time in hours by category, ordered by category?",
+      "evidence": {
+        "dataset": "tickets",
+        "dataset_version": "fixture-v1:f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+        "source_sha256": "f4a108b620dd37db44558aa639c8bd084cf47db9a13297a4e248c6e102883d1a",
+        "sql_sha256": "ee9bddf1bf687a45d773f1a78ac054a55cb4c9efc56e85ec3437c57b8937431d",
+        "result_sha256": "e609939cc0e5cbd7375904ad410b85bdc73a3c53a820731844e4bf4b976811bc"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "category",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "total_resolution_hours",
+            "sql_type": "HUGEINT"
+          }
+        ],
+        "rows": [
+          [
+            "account",
+            584
+          ],
+          [
+            "billing",
+            669
+          ],
+          [
+            "technical",
+            878
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "category",
+        "total_resolution_hours"
+      ],
+      "expected_rows": [
+        [
+          "account",
+          584
+        ],
+        [
+          "billing",
+          669
+        ],
+        [
+          "technical",
+          878
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_inventory_reorder",
+      "question": "How many SKU locations need reorder in each warehouse? Available stock is on_hand minus reserved; reorder when it is strictly below reorder_point. Order by warehouse.",
+      "evidence": {
+        "dataset": "inventory",
+        "dataset_version": "fixture-v1:d46f237dc8ef1c0848a8a8481477b9a239dee683561ee23988342621f4042369",
+        "source_sha256": "d46f237dc8ef1c0848a8a8481477b9a239dee683561ee23988342621f4042369",
+        "sql_sha256": "178f24eadde7fe44bea97b078fe3efcb47c05a1fd85d3f5dff415fa9e448d852",
+        "result_sha256": "c083f6433925a8b1c4a932bbc4e13fe5b3a49001725cdf64d10254749589e312"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "warehouse",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "reorder_count",
+            "sql_type": "BIGINT"
+          }
+        ],
+        "rows": [
+          [
+            "Central Hub",
+            1
+          ],
+          [
+            "North Hub",
+            5
+          ],
+          [
+            "West Hub",
+            6
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "warehouse",
+        "reorder_count"
+      ],
+      "expected_rows": [
+        [
+          "Central Hub",
+          1
+        ],
+        [
+          "North Hub",
+          5
+        ],
+        [
+          "West Hub",
+          6
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    },
+    {
+      "case_id": "dev_inventory_value",
+      "question": "What is on-hand inventory value in USD by warehouse? Use on_hand times unit_cost, ordered by warehouse.",
+      "evidence": {
+        "dataset": "inventory",
+        "dataset_version": "fixture-v1:d46f237dc8ef1c0848a8a8481477b9a239dee683561ee23988342621f4042369",
+        "source_sha256": "d46f237dc8ef1c0848a8a8481477b9a239dee683561ee23988342621f4042369",
+        "sql_sha256": "93fdf8e7a403ac97e9c42f7d713fde7f8d7d8077d99df445665f4111356a22e5",
+        "result_sha256": "32991dd6f6c840e280ae9da32c978d092f16aa8a2104bb9a9da604f78d7525fe"
+      },
+      "result": {
+        "columns": [
+          {
+            "name": "warehouse",
+            "sql_type": "VARCHAR"
+          },
+          {
+            "name": "stock_value_usd",
+            "sql_type": "DECIMAL(38,2)"
+          }
+        ],
+        "rows": [
+          [
+            "Central Hub",
+            "218848.72"
+          ],
+          [
+            "North Hub",
+            "200047.37"
+          ],
+          [
+            "West Hub",
+            "177219.37"
+          ]
+        ],
+        "row_limit": 100,
+        "truncated": false,
+        "output_complete": true
+      },
+      "expected_columns": [
+        "warehouse",
+        "stock_value_usd"
+      ],
+      "expected_rows": [
+        [
+          "Central Hub",
+          "218848.72"
+        ],
+        [
+          "North Hub",
+          "200047.37"
+        ],
+        [
+          "West Hub",
+          "177219.37"
+        ]
+      ],
+      "passed": true,
+      "mismatch": null
+    }
+  ],
+  "passed": true
+}
