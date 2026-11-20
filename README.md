@@ -170,4 +170,7 @@ public held-out manifest is an initial reserved split, not a claim of unseen-tas
 See [W03 progress](docs/progress/w03.md) for this workday's implementation and evidence.
 W04 was explicitly brought forward to November 13; see [W04 progress](docs/progress/w04.md).
 
-W06 profiling was executed November 17; see [W06 progress](docs/progress/w06.md). W07 dataset lifecycle was implemented November 18; see [W07 progress](docs/progress/w07.md). Next: W08, the trusted SQL baseline, on November 19.
+W08 runs all ten development queries against actual imported DuckDB artifacts. From
+`backend`, run `uv run --locked python -m app.baseline --check` to reproduce the
+[checked-in report](evaluation/development/baseline.json). See the
+[baseline contract](docs/trusted-sql-baseline.md) and [W08 progress](docs/progress/w08.md).
