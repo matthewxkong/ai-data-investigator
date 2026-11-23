@@ -18,6 +18,7 @@ from app.repositories.datasets import DatasetRepository
 IMAGE = "adi-query-worker:local"
 DATASET_MOUNT = "/input/data.duckdb"
 MAX_OUTPUT = 1024
+MAX_DATABASE_BYTES = 128 * 1024**2
 DOCKER_DEADLINE = 15.0
 QUERY_DEADLINE = 10.0
 
@@ -199,12 +200,22 @@ class QueryWorker:
                 raise ApiError(404, "not_found", "Dataset not found.")
             try:
                 database = dataset_file(self.data_dir, dataset_id, imported.metadata.version)
+                with TemporaryDirectory(prefix="adi-query-input-") as workspace:
+                    snapshot = Path(workspace) / "data.duckdb"
+                    with database.open("rb") as source, snapshot.open("xb") as destination:
+                        if os.fstat(source.fileno()).st_size > MAX_DATABASE_BYTES:
+                            raise OSError("Dataset exceeds the worker input budget.")
+                        shutil.copyfileobj(source, destination)
+                    if os.name != "nt":
+                        snapshot.chmod(0o444)
+                    name = f"adi-query-{uuid4().hex}"
+                    result = run_container(
+                        create_args(name, snapshot), name, timeout=QUERY_DEADLINE
+                    )
             except (OSError, RuntimeError):
                 raise ApiError(
                     503, "dataset_unavailable", "The dataset artifact is unavailable."
                 ) from None
-            name = f"adi-query-{uuid4().hex}"
-            result = run_container(create_args(name, database), name, timeout=QUERY_DEADLINE)
             if result.row_count != imported.metadata.row_count:
                 raise ApiError(
                     503, "worker_failed", "The dataset row count differs from its metadata."
