@@ -90,14 +90,13 @@ def test_container_counts_owned_import_and_has_only_one_read_only_mount(
         version = UUID(response.json()["version"])
         session = services.sessions.resolve(client.cookies.get(SESSION_COOKIE))
         assert session is not None
-        result = services.query_worker.count_rows(dataset, session_id=session.owner_id)
-        assert result.row_count == 2
         database = dataset_file(settings.data_dir, dataset, version)
         sibling = database.with_name("host-only-marker")
         sibling.write_text("synthetic", encoding="utf-8")
+        database.chmod(0o644)
         args = create_args(name, database)
         probe = (
-            "import os,socket; "
+            "import os,runpy,socket; "
             "assert os.geteuid()==65532; "
             "assert {name for _,name in socket.if_nameindex()}=={'lo'}; "
             "assert 'ADI_TEST_HOST_ONLY_SECRET' not in os.environ; "
@@ -105,7 +104,8 @@ def test_container_counts_owned_import_and_has_only_one_read_only_mount(
             "assert os.statvfs('/input/data.duckdb').f_flag & os.ST_RDONLY; "
             "assert os.statvfs('/worker').f_flag & os.ST_RDONLY; "
             "assert not os.path.exists('/var/run/docker.sock'); "
-            "assert not os.path.exists('/input/host-only-marker')"
+            "assert not os.path.exists('/input/host-only-marker'); "
+            "assert runpy.run_path('/worker/query.py')['count_rows']()==2"
         )
         try:
             subprocess.run(
@@ -127,9 +127,12 @@ def test_container_counts_owned_import_and_has_only_one_read_only_mount(
             assert host["MemorySwap"] == host["Memory"] == 256 * 1024**2
             assert host["NanoCpus"] == 10**9 and host["PidsLimit"] == 32
             assert host["LogConfig"]["Type"] == "none"
-            subprocess.run(
-                ["docker", "start", "--attach", name], check=True, capture_output=True, timeout=20
+            probed = subprocess.run(
+                ["docker", "start", "--attach", name], capture_output=True, timeout=20
             )
+            assert probed.returncode == 0, probed.stderr.decode("utf-8", errors="replace")
+            result = services.query_worker.count_rows(dataset, session_id=session.owner_id)
+            assert result.row_count == 2
         finally:
             subprocess.run(
                 ["docker", "rm", "--force", name], capture_output=True, timeout=20, check=False
