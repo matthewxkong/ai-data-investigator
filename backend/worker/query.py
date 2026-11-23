@@ -7,22 +7,19 @@ import duckdb
 
 
 def count_rows() -> int:
-    with duckdb.connect(
-        "/input/data.duckdb",
-        read_only=True,
-        config={
-            "threads": "1",
-            "memory_limit": "128MB",
-            "temp_directory": "/tmp/spill",
-            "max_temp_directory_size": "32MB",
-            "enable_external_access": "false",
-            "allow_unsigned_extensions": "false",
-            "allow_community_extensions": "false",
-            "autoinstall_known_extensions": "false",
-            "autoload_known_extensions": "false",
-            "lock_configuration": "true",
-        },
-    ) as connection:
+    config = {
+        "threads": "1",
+        "memory_limit": "128MB",
+        "allow_unsigned_extensions": "false",
+        "allow_community_extensions": "false",
+        "autoinstall_known_extensions": "false",
+        "autoload_known_extensions": "false",
+    }
+    with duckdb.connect("/input/data.duckdb", read_only=True, config=config) as connection:
+        connection.execute("SET temp_directory = '/tmp/spill'")
+        connection.execute("SET max_temp_directory_size = '32MB'")
+        connection.execute("SET enable_external_access = false")
+        connection.execute("SET lock_configuration = true")
         row = connection.execute("SELECT count(*) FROM data").fetchone()
     if row is None:
         raise ValueError("Missing count result.")
