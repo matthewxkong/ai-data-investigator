@@ -38,6 +38,13 @@ jobs:
       - run: uv run --locked mypy app
       - run: uv run --locked python -m app.fixtures --check
       - run: uv run --locked pytest
+      - name: Build and verify the query worker
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          ADI_TEST_QUERY_WORKER: "1"
+        run: |
+          docker build --tag adi-query-worker:local worker
+          uv run --locked pytest -q tests/test_query_worker.py
 
   frontend:
     name: Frontend / ${{ matrix.os }}
