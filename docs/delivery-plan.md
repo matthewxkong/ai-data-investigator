@@ -300,16 +300,18 @@ Implemented November 17 on a separate branch dependent on W05 PR #10; tracking i
 
 **Done when:** The worker can query its mounted dataset while blocked from network access, host secrets, and unrelated files.
 
+**Implementation:** See [W09 progress](progress/w09.md).
+
 **Candidate commits:**
 
-- [ ] Separate query worker from API process.
-- [ ] Build non-root worker container.
-- [ ] Mount only the current dataset read-only.
-- [ ] Disable worker networking and inherited secrets.
-- [ ] Apply CPU memory time and output limits.
-- [ ] Terminate timed-out queries and clean workers.
-- [ ] Check prohibited network and filesystem access.
-- [ ] Document worker boundary and deployment requirements.
+- [x] Separate query worker from API process.
+- [x] Build non-root worker container.
+- [x] Mount only the current dataset read-only.
+- [x] Disable worker networking and inherited secrets.
+- [x] Apply CPU, memory, time, and output limits.
+- [x] Terminate timed-out queries and clean workers.
+- [x] Check network and filesystem boundaries.
+- [x] Document worker boundary and deployment requirements.
 
 ### W10 / D15 - Monday, November 23, 2026
 

@@ -33,6 +33,8 @@ Controlled CSV ingestion is a separate path with file-byte, row-count, parse, an
 
 The [trusted SQL baseline](trusted-sql-baseline.md) is a developer CLI for checked-in queries and verified synthetic fixtures. It uses the normal CSV importer and local read-only DuckDB artifacts. It has no HTTP route or model access. The future isolation boundary is still required for generated queries.
 
+W09 adds the [isolated query worker](query-worker.md) and exercises the runtime boundary with a fixed row count. W10 will add the policy required before the worker can accept generated queries.
+
 ## Privacy
 
 The local product retains raw datasets locally. The model receives schema, metric definitions, and bounded aggregate results by default. Schema and aggregates can themselves be sensitive, so disclose external processing before enabling the model. Raw examples require explicit user opt-in. Never send credentials, unrelated files, or complete datasets as context.

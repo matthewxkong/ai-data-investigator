@@ -1,4 +1,4 @@
-> Current: [W08 trusted SQL baseline](progress/w08.md), completed November 20 as catch-up for November 19. [W07 dataset lifecycle](progress/w07.md) and W08 are reviewed together. W09 query-worker isolation remains scheduled for November 22.
+> Current: [W09 query worker isolation](progress/w09.md). W10 SQL admission policy is next. [W07](progress/w07.md) and [W08](progress/w08.md) are reviewed together in P04.
 
 # Delivery progress
 
