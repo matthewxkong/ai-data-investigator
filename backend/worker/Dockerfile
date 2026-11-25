@@ -3,6 +3,7 @@ WORKDIR /worker
 COPY requirements.txt .
 RUN python -m pip install --no-cache-dir --only-binary=:all: --require-hashes -r requirements.txt
 COPY query.py .
+COPY policy.py /usr/local/lib/python3.13/site-packages/worker/policy.py
 ENV HOME=/tmp
 USER 65532:65532
 ENTRYPOINT ["python", "-I", "-B", "/worker/query.py"]
