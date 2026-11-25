@@ -1,4 +1,4 @@
-"""Launch the fixed count query in a disposable local Linux container."""
+"""Launch owned analytical queries in a disposable local Linux container."""
 
 import csv
 import io
@@ -8,16 +8,17 @@ import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import BoundedSemaphore, Thread
+from typing import Annotated, Literal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.errors import ApiError
 from app.repositories.datasets import DatasetRepository
+from worker.policy import MAX_CELL, MAX_COLUMNS, MAX_OUTPUT, MAX_ROWS, PolicyDenied, parse_select
 
 IMAGE = "adi-query-worker:local"
 DATASET_MOUNT = "/input/data.duckdb"
-MAX_OUTPUT = 1024
 MAX_DATABASE_BYTES = 128 * 1024**2
 DOCKER_DEADLINE = 15.0
 QUERY_DEADLINE = 10.0
@@ -28,6 +29,19 @@ class CountResult(BaseModel):
 
     schema_version: int = Field(ge=1, le=1)
     row_count: int = Field(ge=0, le=100_000)
+
+
+class SelectResult(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, frozen=True, allow_inf_nan=False)
+
+    schema_version: Literal[1]
+    columns: list[Annotated[str, Field(max_length=MAX_CELL)]] = Field(
+        min_length=1, max_length=MAX_COLUMNS
+    )
+    rows: list[list[Annotated[str, Field(max_length=MAX_CELL)] | int | float | bool | None]] = (
+        Field(max_length=MAX_ROWS)
+    )
+    truncated: bool
 
 
 def dataset_file(data_dir: Path, dataset_id: UUID, version: UUID) -> Path:
@@ -91,11 +105,21 @@ def docker_environment() -> dict[str, str]:
     return {key: value for key, value in os.environ.items() if key.upper() in allowed}
 
 
-def attached_output(command: list[str], *, env: dict[str, str], timeout: float) -> bytes:
+def attached_output(
+    command: list[str], *, env: dict[str, str], timeout: float, request: bytes | None = None
+) -> bytes:
+    with TemporaryDirectory(prefix="adi-query-request-") as workspace:
+        path = Path(workspace) / "request"
+        path.write_bytes(request or b"")
+        with path.open("rb") as stream:
+            return read_output(command, env=env, timeout=timeout, stdin=stream.fileno())
+
+
+def read_output(command: list[str], *, env: dict[str, str], timeout: float, stdin: int) -> bytes:
     with subprocess.Popen(
         command,
         env=env,
-        stdin=subprocess.DEVNULL,
+        stdin=stdin,
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
     ) as process:
@@ -127,7 +151,9 @@ def attached_output(command: list[str], *, env: dict[str, str], timeout: float) 
         return bytes(output)
 
 
-def run_container(args: list[str], name: str, *, timeout: float) -> CountResult:
+def run_container(
+    args: list[str], name: str, *, timeout: float, request: bytes | None = None
+) -> bytes:
     executable = shutil.which("docker")
     if executable is None:
         raise ApiError(503, "worker_unavailable", "The local Docker worker is unavailable.")
@@ -158,14 +184,17 @@ def run_container(args: list[str], name: str, *, timeout: float) -> CountResult:
                     )
                 created = True
                 try:
-                    output = attached_output(
-                        [*docker, "start", "--attach", name], env=env, timeout=timeout
+                    flags = ["--interactive"] if request is not None else []
+                    return attached_output(
+                        [*docker, "start", "--attach", *flags, name],
+                        env=env,
+                        timeout=timeout,
+                        request=request,
                     )
                 except subprocess.TimeoutExpired:
                     raise ApiError(
                         408, "worker_timeout", "The query worker exceeded its time limit."
                     ) from None
-                return CountResult.model_validate_json(output)
             finally:
                 try:
                     removed = control("rm", "--force", name) == 0
@@ -192,12 +221,36 @@ class QueryWorker:
         self.slots = BoundedSemaphore(2)
 
     def count_rows(self, dataset_id: UUID, *, session_id: str) -> CountResult:
+        result = self.execute(dataset_id, session_id=session_id, sql=None)
+        assert isinstance(result, CountResult)
+        return result
+
+    def select(self, dataset_id: UUID, *, session_id: str, sql: str) -> SelectResult:
+        result = self.execute(dataset_id, session_id=session_id, sql=sql)
+        assert isinstance(result, SelectResult)
+        return result
+
+    def execute(
+        self, dataset_id: UUID, *, session_id: str, sql: str | None
+    ) -> CountResult | SelectResult:
         if not self.slots.acquire(blocking=False):
             raise ApiError(429, "worker_busy", "Two query workers are active. Retry shortly.")
         try:
             imported = self.datasets.get_import(dataset_id, session_id=session_id)
             if imported is None:
                 raise ApiError(404, "not_found", "Dataset not found.")
+            request = None
+            if sql is not None:
+                try:
+                    parse_select(sql, {column.safe_name for column in imported.columns})
+                    encoded = sql.encode("utf-8")
+                    request = len(encoded).to_bytes(4, "big") + encoded
+                except PolicyDenied as error:
+                    raise ApiError(422, "sql_policy_denied", str(error)) from None
+                except UnicodeError:
+                    raise ApiError(
+                        422, "sql_policy_denied", "Use valid Unicode SQL text."
+                    ) from None
             try:
                 database = dataset_file(self.data_dir, dataset_id, imported.metadata.version)
                 with TemporaryDirectory(prefix="adi-query-input-") as workspace:
@@ -209,17 +262,27 @@ class QueryWorker:
                     if os.name != "nt":
                         snapshot.chmod(0o444)
                     name = f"adi-query-{uuid4().hex}"
-                    result = run_container(
-                        create_args(name, snapshot), name, timeout=QUERY_DEADLINE
-                    )
+                    args = create_args(name, snapshot)
+                    if request is not None:
+                        args = [args[0], "--interactive", *args[1:], "select"]
+                    output = run_container(args, name, timeout=QUERY_DEADLINE, request=request)
             except (OSError, RuntimeError):
                 raise ApiError(
                     503, "dataset_unavailable", "The dataset artifact is unavailable."
                 ) from None
-            if result.row_count != imported.metadata.row_count:
+            try:
+                if request is not None:
+                    selected = SelectResult.model_validate_json(output)
+                    if any(len(row) != len(selected.columns) for row in selected.rows):
+                        raise ValueError("Inconsistent result width.")
+                    return selected
+                counted = CountResult.model_validate_json(output)
+                if counted.row_count != imported.metadata.row_count:
+                    raise ValueError("Inconsistent dataset row count.")
+                return counted
+            except ValueError:
                 raise ApiError(
-                    503, "worker_failed", "The dataset row count differs from its metadata."
-                )
-            return result
+                    503, "worker_failed", "The query worker result is invalid."
+                ) from None
         finally:
             self.slots.release()
