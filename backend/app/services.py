@@ -6,6 +6,7 @@ from app.config import Settings
 from app.database import Database
 from app.ingestion.deletion import DatasetDeletion
 from app.ingestion.service import IngestionService
+from app.query_worker import QueryWorker
 from app.repositories.datasets import DatasetRepository
 from app.repositories.investigations import InvestigationRepository
 from app.schema.repository import SchemaRepository
@@ -23,6 +24,7 @@ class Services:
     ingestion: IngestionService
     deletion: DatasetDeletion
     schema: SchemaService
+    query_worker: QueryWorker
 
 
 def create_services(settings: Settings) -> Services:
@@ -39,4 +41,5 @@ def create_services(settings: Settings) -> Services:
         ingestion=ingestion,
         deletion=DatasetDeletion(settings.data_dir, datasets),
         schema=SchemaService(ingestion, SchemaRepository(database)),
+        query_worker=QueryWorker(settings.data_dir, datasets),
     )

@@ -1,4 +1,4 @@
-> Current: [W08 trusted SQL baseline](progress/w08.md), completed November 20 as catch-up for November 19. [W07 dataset lifecycle](progress/w07.md) and W08 are reviewed together. W09 query-worker isolation remains scheduled for November 22.
+> Current: [W10 SQL execution policy](progress/w10.md). W11 typed model tools are next. [W09](progress/w09.md) and W10 share P05.
 
 # Delivery progress
 
