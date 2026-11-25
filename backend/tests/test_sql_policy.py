@@ -28,6 +28,18 @@ def test_compiled_query_returns_known_aggregate_and_treats_text_as_data() -> Non
         assert database.execute(statement, parameters).fetchall() == [("West", 8), ("East", 2)]
 
 
+def test_missing_values_and_explicit_limits_keep_sql_meaning() -> None:
+    statement, parameters = parse_select(
+        "SELECT region FROM data WHERE quantity IS NULL OR region = 'East' "
+        "ORDER BY region DESC LIMIT 1",
+        COLUMNS,
+    ).compile()
+    with duckdb.connect(":memory:") as database:
+        database.execute("CREATE TABLE data (region VARCHAR, quantity VARCHAR)")
+        database.execute("INSERT INTO data VALUES ('West', NULL), ('East', '1'), ('North', '2')")
+        assert database.execute(statement, parameters).fetchall() == [("West",)]
+
+
 @pytest.mark.parametrize(
     "sql",
     [

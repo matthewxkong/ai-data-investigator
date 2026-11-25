@@ -166,6 +166,20 @@ def test_container_counts_owned_import_and_has_only_one_read_only_mount(
             assert selected.columns == ["label"]
             assert selected.rows == [["SECOND"]]
             assert not selected.truncated
+            with_long_cell = "x" * 300
+            long_upload = client.post(
+                "/api/datasets",
+                content=("name\n" + with_long_cell + "\n").encode(),
+                headers={"Content-Type": "text/csv"},
+            )
+            assert long_upload.status_code == 201
+            clipped = services.query_worker.select(
+                UUID(long_upload.json()["id"]),
+                session_id=session.owner_id,
+                sql="SELECT name FROM data",
+            )
+            assert clipped.rows == [[with_long_cell[:256]]]
+            assert clipped.truncated
         finally:
             subprocess.run(
                 ["docker", "rm", "--force", name], capture_output=True, timeout=20, check=False

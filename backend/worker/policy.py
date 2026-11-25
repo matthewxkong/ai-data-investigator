@@ -53,7 +53,7 @@ class PolicyDenied(ValueError):
 
 @dataclass(frozen=True)
 class Expression:
-    kind: Literal["column", "literal", "call", "binary", "cast", "star", "null"]
+    kind: Literal["column", "literal", "call", "binary", "cast", "star", "null", "isnull"]
     value: Scalar
     children: tuple["Expression", ...] = ()
 
@@ -70,6 +70,8 @@ class Expression:
         args = [child.render(params) for child in self.children]
         if self.kind == "binary":
             return f"({args[0]} {self.value} {args[1]})"
+        if self.kind == "isnull":
+            return f"({args[0]} IS {'NOT ' if self.value else ''}NULL)"
         if self.kind == "cast":
             return f"TRY_CAST({args[0]} AS {CASTS[str(self.value)]})"
         return f"{self.value}({', '.join(args)})"
@@ -217,7 +219,15 @@ class Parser:
         if depth >= 16:
             raise PolicyDenied("Simplify the nesting in the query.")
         left = self.atom(depth)
-        while (precedence := PRECEDENCE.get(self.current[1].upper(), 0)) >= minimum:
+        while True:
+            if minimum <= 3 and self.take("IS"):
+                negated = self.take("NOT")
+                self.need("NULL", "Use IS NULL or IS NOT NULL for missing values.")
+                left = Expression("isnull", negated, (left,))
+                continue
+            precedence = PRECEDENCE.get(self.current[1].upper(), 0)
+            if precedence < minimum:
+                break
             operator = self.current[1].upper()
             self.position += 1
             right = self.expression(precedence + 1, depth + 1)

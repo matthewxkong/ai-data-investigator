@@ -35,7 +35,7 @@ jobs:
       - run: uv sync --locked
       - run: uv run --locked ruff check .
       - run: uv run --locked ruff format --check .
-      - run: uv run --locked mypy app
+      - run: uv run --locked mypy app worker
       - run: uv run --locked python -m app.fixtures --check
       - run: uv run --locked pytest
       - name: Build and verify the query worker
