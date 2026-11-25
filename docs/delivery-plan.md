@@ -321,14 +321,15 @@ Implemented November 17 on a separate branch dependent on W05 PR #10; tracking i
 
 **Candidate commits:**
 
-- [ ] Parse SQL into a syntax tree.
-- [ ] Allow one approved analytical statement shape.
-- [ ] Allowlist dataset relations and scalar functions.
-- [ ] Reject writes attachments external scans and extensions.
-- [ ] Restrict catalog access and configuration changes.
-- [ ] Return actionable policy-denial errors.
-- [ ] Add bypass cases and isolation regression checks.
-- [ ] Document policy limits and merge P05.
+- [x] Parse SQL into a syntax tree.
+- [x] Allow one approved analytical statement shape.
+- [x] Allowlist dataset relations and scalar functions.
+- [x] Reject writes, attachments, external scans, and extensions.
+- [x] Restrict catalog access and configuration changes.
+- [x] Return actionable policy-denial errors.
+- [x] Add policy and isolation regression checks.
+- [x] Document policy limits.
+- [ ] Merge P05 after owner review.
 
 ### W11 / D16 - Tuesday, November 24, 2026
 

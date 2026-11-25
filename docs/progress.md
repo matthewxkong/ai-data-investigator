@@ -1,4 +1,4 @@
-> Current: [W09 query worker isolation](progress/w09.md). W10 SQL admission policy is next. [W07](progress/w07.md) and [W08](progress/w08.md) are reviewed together in P04.
+> Current: [W10 SQL execution policy](progress/w10.md). W11 typed model tools are next. [W09](progress/w09.md) and W10 share P05.
 
 # Delivery progress
 
