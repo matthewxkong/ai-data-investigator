@@ -9,6 +9,7 @@ from uuid import UUID, uuid4
 import pytest
 from fastapi.testclient import TestClient
 
+from app import query_worker
 from app.config import Settings
 from app.errors import ApiError
 from app.main import create_app
@@ -40,6 +41,30 @@ def test_worker_rejects_foreign_session_before_launch(settings: Settings) -> Non
         with pytest.raises(ApiError) as error:
             services.query_worker.count_rows(UUID(response.json()["id"]), session_id="other")
         assert error.value.status_code == 404
+
+
+def test_denied_query_never_launches_docker(
+    settings: Settings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    application = create_app(settings)
+    services = cast(Services, application.state.services)
+
+    def unexpected_container(*args: object, **kwargs: object) -> bytes:
+        pytest.fail("A denied query must not launch a container.")
+
+    monkeypatch.setattr(query_worker, "run_container", unexpected_container)
+    with TestClient(application) as client:
+        uploaded = client.post(
+            "/api/datasets", content=b"name\nexample\n", headers={"Content-Type": "text/csv"}
+        )
+        assert uploaded.status_code == 201
+        session = services.sessions.resolve(client.cookies.get(SESSION_COOKIE))
+        assert session is not None
+        with pytest.raises(ApiError) as error:
+            services.query_worker.select(
+                UUID(uploaded.json()["id"]), session_id=session.owner_id, sql="SHOW TABLES"
+            )
+        assert (error.value.status_code, error.value.code) == (422, "sql_policy_denied")
 
 
 def test_launcher_bounds_stdout_without_waiting_for_extra_output() -> None:
@@ -133,6 +158,14 @@ def test_container_counts_owned_import_and_has_only_one_read_only_mount(
             assert probed.returncode == 0, probed.stderr.decode("utf-8", errors="replace")
             result = services.query_worker.count_rows(dataset, session_id=session.owner_id)
             assert result.row_count == 2
+            selected = services.query_worker.select(
+                dataset,
+                session_id=session.owner_id,
+                sql="SELECT UPPER(name) AS label FROM data WHERE name = 'second' ORDER BY label",
+            )
+            assert selected.columns == ["label"]
+            assert selected.rows == [["SECOND"]]
+            assert not selected.truncated
         finally:
             subprocess.run(
                 ["docker", "rm", "--force", name], capture_output=True, timeout=20, check=False
